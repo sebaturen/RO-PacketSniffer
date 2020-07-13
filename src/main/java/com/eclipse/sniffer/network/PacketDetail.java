@@ -3,6 +3,7 @@ package com.eclipse.sniffer.network;
 import com.eclipse.sniffer.enums.PacketList;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class PacketDetail {
@@ -10,6 +11,7 @@ public class PacketDetail {
     private PacketList name;
     private String packetHeader;
     private List<String> content;
+    private Date timestamp;
     private int port;
 
     public PacketDetail(PacketList name, String packetHeader, List<String> content, int port) {
@@ -17,6 +19,7 @@ public class PacketDetail {
         this.packetHeader = packetHeader;
         this.content = content;
         this.port = port;
+        this.timestamp = new Date();
     }
 
     public int getPort() {
@@ -41,6 +44,7 @@ public class PacketDetail {
                 "\"name\":" + (name == null ? "null" : name) + ", " +
                 "\"packetHeader\":" + (packetHeader == null ? "null" : "\"" + packetHeader + "\"") + ", " +
                 "\"content\":" + (content == null ? "null" : Arrays.toString(content.toArray())) + ", " +
+                "\"timestamp\":" + (timestamp == null ? "null" : timestamp) + ", " +
                 "\"port\":\"" + port + "\"" +
                 "}";
     }

@@ -1,21 +1,20 @@
 package com.eclipse.sniffer.network;
 
+import com.eclipse.sniffer.Sniffer;
 import com.eclipse.sniffer.enums.PacketList;
 import com.eclipse.sniffer.tables.RecvPackets;
 
-import javax.xml.bind.DatatypeConverter;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.util.*;
 
 public class PacketDecryption {
 
     private static final List<PacketDetail> packList = new ArrayList<>();
-    private String[] delayPacket;
-    private int delayPacketPort;
+    private Map<Integer, String[]> delayPacket = new HashMap<>();
+    private List<String> lastPackets = new ArrayList<>();
 
     public PacketDecryption() {
+
     }
 
     /**
@@ -23,36 +22,9 @@ public class PacketDecryption {
      */
     public void decryption(String packets, int port) {
 
-        for (PacketDetail pd : packetSplitter(packets, port)) {
-            try {
-                //System.out.println(pd);
-                if (pd.getName() == PacketList.LOCAL_BROADCAST) {
-                    System.out.println((new Date()) +" "+ pd.getContent());
-                    String ab = hexToAscii(String.join("", pd.getContent()).toLowerCase());
-                    String pattern = ".*The \\[[aA-zZ].*\\] castle has been conquered by the \\[[aA-zZ].*\\] guild.";
-                    if (ab.matches(pattern)) {
-                        System.out.println((new Date()) +" "+ ab);
-                    }
-                }
-                if (pd.getName() == PacketList.UNKNOWN) {
-                    System.out.println(pd);
-                }
-            } catch (Exception e) {
-                System.out.println("ERROR! "+ e);
-            }
-        }
+        packList.addAll(packetSplitter(packets, port));
+        Sniffer.packetAddNotification();
 
-    }
-
-    private static String hexToAscii(String hexStr) {
-        StringBuilder output = new StringBuilder("");
-
-        for (int i = 0; i < hexStr.length(); i += 2) {
-            String str = hexStr.substring(i, i + 2);
-            output.append((char) Integer.parseInt(str, 16));
-        }
-
-        return output.toString();
     }
 
     private List<PacketDetail> packetSplitter(String packet, int port) {
@@ -60,18 +32,20 @@ public class PacketDecryption {
         List<PacketDetail> packetDetails = new ArrayList<>();
         //System.out.println(packet);
         String[] sepContent = packet.split(" ");
+        lastPackets.add(packet);
+        if (lastPackets.size() > 5) {
+            lastPackets.remove(0);
+        }
 
         try {
             do {
                 // Append new packet to delay packet if exist.
-                if (delayPacket != null) {
-                    if (port == delayPacketPort) {
-                        List<String> appendPacket = new ArrayList<>();
-                        appendPacket.addAll(Arrays.asList(delayPacket));
-                        appendPacket.addAll(Arrays.asList(sepContent));
-                        sepContent = appendPacket.toArray(sepContent);
-                        delayPacket = null;
-                    }
+                if (delayPacket.containsKey(port)) {
+                    String[] dPacket = delayPacket.remove(port);
+                    List<String> appendPacket = new ArrayList<>();
+                    appendPacket.addAll(Arrays.asList(dPacket));
+                    appendPacket.addAll(Arrays.asList(sepContent));
+                    sepContent = appendPacket.toArray(sepContent);
                 }
                 String pList = sepContent[1]+sepContent[0];
                 int pSize = RecvPackets.getPacketSize(pList);
@@ -87,8 +61,7 @@ public class PacketDecryption {
                     }
                     // If the packet info continue in next packet
                     if (to > sepContent.length) {
-                        delayPacket = sepContent;
-                        delayPacketPort = port;
+                        delayPacket.put(port, sepContent);
                         sepContent = null;
                     } else {
                         // Save a correct info
@@ -98,6 +71,7 @@ public class PacketDecryption {
                     }
                 } else {
                     System.out.println("UNKNOWN PACKET "+ Arrays.toString(sepContent) +" FULL PACKET -> "+ packet);
+                    System.out.println("LAST 5 PACKETS! "+ lastPackets);
                     sepContent = null;
                 }
             } while (sepContent != null && sepContent.length > 0);
@@ -113,9 +87,12 @@ public class PacketDecryption {
     public static PacketDetail getPacket() {
         //System.out.println(packList);
         if (packList.size() > 0) {
-            System.out.println("removed?");
             return packList.remove(0);
         }
         return null;
+    }
+
+    public static int sizePackets() {
+        return packList.size();
     }
 }

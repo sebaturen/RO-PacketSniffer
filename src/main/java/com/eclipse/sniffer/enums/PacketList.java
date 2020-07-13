@@ -5,6 +5,7 @@ import java.util.Optional;
 
 public enum PacketList {
     UNKNOWN("-1"),
+    UNKNOWN_2("0A96"),
     // ACTOR
     ACTOR_EXISTS("09FF"),
     ACTOR_LOOK_AT("009C"),
@@ -38,6 +39,7 @@ public enum PacketList {
     CHARACTER_OVERWEIGHT_PERCENT("0ADE"),
     CHARACTER_SKILL_LIST("010F"),
     // GUILD
+    GUILD_MEMBER_MAP_CHANGE("01EC"),
     GUILD_MASTER_MEMBER("014E"),
     GUILD_MEMBERS_TITLE_LIST("0166"),
     GUILD_MEMBERS_LIST("0154"),
@@ -50,6 +52,7 @@ public enum PacketList {
     GUILD_EMBLEM("0152"),
     GUILD_NAME("016C"),
     GUILD_MEMBER_ADD("0182"),
+    GUILD_LEAVE("015A"),
     // VENDOR
     VENDOR_ITEMS_LIST("0A8D"),
     // BUYING
@@ -82,12 +85,15 @@ public enum PacketList {
     CHAT_SELF("008E"),
     CHAT_INFO("00D7"),
     CHAT_REMOVED("00D8"),
+    CHAT_JOIN_RESULT("00DA"),
     // SPELL
     SPELL_AREA("011F"),
     SPELL_AREA_DISAPPEARS("0120"),
     SPELL_AREA_MULTIPLE2("099F"),
     SPELL_AREA_MULTIPLE3("09CA"),
     // PARTY
+    PARTY_EXP_1("07D8"),
+    PARTY_EXP_2("0101"),
     PARTY_LOCATION("0107"),
     PARTY_JOIN("0AE4"),
     PARTY_HP_INFO("080E"),
@@ -96,8 +102,10 @@ public enum PacketList {
     PARTY_DEAD("0AB2"),
     PARTY_ALLOW_INVITE("02C9"),
     PARTY_USERS_INFO("0AE5"),
-    PARTY_EXP("0101"),
     PARTY_LEAVE("0105"),
+    PARTY_INVITE_RESULT("02C5"),
+    PARTY_SHOW_PICKER("02B8"),
+    PARTY_LEADER("07FC"),
     // MONSTER
     MONSTER_HP_INFO_TINY("0A36"),
     MONSTER_RANGED_ATTACK("0139"),
@@ -106,6 +114,14 @@ public enum PacketList {
     RODEX_READ_MAIL("09EB"),
     RODEX_GET_ITEM("09F4"),
     UNREAD_RODEX("09E7"),
+    RODEX_GET_ZENY("09F2"),
+    RODEX_DELETE("09F6"),
+    // DEAL
+    DEAL_ADD_YOU("00EA"),
+    DEAL_BEGIN("01F5"),
+    DEAL_BEGIN_2("00E7"),
+    DEAL_FINISH("00EC"),
+    DEAL_COMPLETE("00F0"),
     // NPC
     NPC_TALK("00B4"),
     NPC_TALK_CONTINUE("00B5"),
@@ -124,10 +140,22 @@ public enum PacketList {
     MAP_PROPERTY("01D6"),
     MAP_PROPERTY_3("099B"),
     MAP_LOADED("02EB"),
+    MAP_LOADED_2("0073"),
     MAP_MINI_INDICATOR("0446"),
     MAP_CHANGE("0091"),
     MAP_CHANGED("0092"),
+    // MISC
+    MISC_CONFIG_REPLY("02D9"),
+    MISC_EFFECT("01F3"),
+    MISC_CONFIG("0ADC"),
+    // STORAGE
+    STORAGE_OPENED("00F2"),
+    STORAGE_ITEM_REMOVED("00F6"),
+    STORAGE_ITEM_ADDED("0A0A"),
+    STORAGE_CLOSED("00F8"),
     // ??
+    PRIVATE_MESSAGE_SENT("09DF"),
+    COMBO_DELAY("01D2"),
     UNEQUIP_ITEM("099A"),
     EQUIP_ITEM("0999"),
     RESURRECTION("0148"),
@@ -138,7 +166,6 @@ public enum PacketList {
     SEARCH_STORE_OPEN("083A"),
     SEARCH_STORE_RESULT("0836"),
     WARP_PORTAL_LIST("011C"),
-    DEAL_BEGIN("01F5"),
     PRIVATE_MESSAGE("09DE"),
     HIGH_JUMP("08D2"),
     HIGH_JUMP_2("01FF"),
@@ -153,7 +180,6 @@ public enum PacketList {
     CASH_SHOP_LIST("08CA"),
     LOGIN_ERROR("006A"),
     ACHIEVEMENT_UPDATE("0A24"),
-    MISC_CONFIG("0ADC"),
     HOTKEYS("07D9"),
     ATTACK_RANGE("013A"),
     ACCOUNT_ID("0283"),
@@ -162,7 +188,7 @@ public enum PacketList {
     HET_EFFECT("0A3B"),
     EMOTICON("00C0"),
     HP_SP_CHANGED("0A27"),
-    SHOW_EQ("0B03"),
+    SHOW_EQUIP("0B03"),
     EXP("0ACC"),
     FRIEND_LOGON("0206"),
     ERRORS("0081"),
@@ -170,7 +196,6 @@ public enum PacketList {
     STAT_INFO_2("00B1"),
     STAT_INFO_3("0141"),
     STAT_INFO_4("0ACB"),
-    MISC_CONFIG_REPLY("02D9"),
     SYNC_REQUEST("0187"),
     RECEIVED_SYNC("007F"),
     EAC_KEY("0A7B"),
@@ -181,7 +206,14 @@ public enum PacketList {
     EMPTY_1("0870"),
     EMPTY_2("0838"),
     EMPTY_3("087E"),
-    EMPTY_4("087F");
+    EMPTY_4("087F"),
+    EMPTY_5("0919"),
+    EMPTY_6("091A"),
+    EMPTY_7("091B"),
+    EMPTY_8("091C"),
+    EMPTY_9("091D"),
+    EMPTY_10("0899"),
+    EMPTY_11("091E");
 
     private final String ident;
 
