@@ -2,7 +2,6 @@ package com.eclipse.sniffer.network;
 
 import com.eclipse.sniffer.enums.PacketList;
 import junit.framework.TestCase;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.*;
@@ -14,15 +13,15 @@ public class PacketDecryptionTest extends TestCase {
 
         PacketDecryption pD = new PacketDecryption();
 
-        List<PacketDetail> resultTestOne = new ArrayList<>();
-        resultTestOne.add(new PacketDetail(PacketList.PARTY_HP_INFO, PacketList.PARTY_HP_INFO.toString(), Arrays.asList("D0", "BD", "04", "00", "57", "12", "00", "00", "57", "12", "00", "00"), 111));
-        resultTestOne.add(new PacketDetail(PacketList.PARTY_HP_INFO, PacketList.PARTY_HP_INFO.toString(), Arrays.asList("D6", "BB", "04", "00", "AE", "17", "00", "00", "AE", "17", "00", "00"), 111));
+        List<ROPacketDetail> resultTestOne = new ArrayList<>();
+        resultTestOne.add(new ROPacketDetail(PacketList.PARTY_HP_INFO, PacketList.PARTY_HP_INFO.toString(), Arrays.asList("D0", "BD", "04", "00", "57", "12", "00", "00", "57", "12", "00", "00"), 111));
+        resultTestOne.add(new ROPacketDetail(PacketList.PARTY_HP_INFO, PacketList.PARTY_HP_INFO.toString(), Arrays.asList("D6", "BB", "04", "00", "AE", "17", "00", "00", "AE", "17", "00", "00"), 111));
 
         //Assert.assertArrayEquals(resultTestOne.toArray(), pD.packetSplitter("0E 08 D0 BD 04 00 57 12 00 00 57 12 00 00 0E 08 D6 BB 04 00 AE 17 00 00 AE 17 00 00", 111).toArray());
 
 
-        List<PacketDetail> resultTestTwo = new ArrayList<>();
-        resultTestTwo.add(new PacketDetail(PacketList.ACTOR_MOVE, PacketList.ACTOR_MOVE.toString(), Arrays.asList("05", "F6", "1C", "00", "00", "00", "00",
+        List<ROPacketDetail> resultTestTwo = new ArrayList<>();
+        resultTestTwo.add(new ROPacketDetail(PacketList.ACTOR_MOVE, PacketList.ACTOR_MOVE.toString(), Arrays.asList("05", "F6", "1C", "00", "00", "00", "00",
                 "00", "00", "A5", "00", "00", "00", "00", "00", "00", "00", "00", "00", "5C", "05", "00", "00", "00", "00",
                 "00", "00", "00", "00", "00", "00", "00", "00", "36", "BD", "01", "01", "00", "00", "00", "00", "00", "00",
                 "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00",

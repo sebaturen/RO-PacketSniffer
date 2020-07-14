@@ -6,15 +6,15 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-public class PacketDetail {
+public class ROPacketDetail {
 
     private PacketList name;
     private String packetHeader;
-    private List<String> content;
     private Date timestamp;
+    private byte[] content;
     private int port;
 
-    public PacketDetail(PacketList name, String packetHeader, List<String> content, int port) {
+    public ROPacketDetail(PacketList name, String packetHeader, byte[] content, int port) {
         this.name = name;
         this.packetHeader = packetHeader;
         this.content = content;
@@ -30,7 +30,7 @@ public class PacketDetail {
         return name;
     }
 
-    public List<String> getContent() {
+    public byte[] getContent() {
         return content;
     }
 
@@ -40,11 +40,11 @@ public class PacketDetail {
 
     @Override
     public String toString() {
-        return "{\"_class\":\"PacketDetail\", " +
+        return "{\"_class\":\"ROPacketDetail\", " +
                 "\"name\":" + (name == null ? "null" : name) + ", " +
                 "\"packetHeader\":" + (packetHeader == null ? "null" : "\"" + packetHeader + "\"") + ", " +
-                "\"content\":" + (content == null ? "null" : Arrays.toString(content.toArray())) + ", " +
                 "\"timestamp\":" + (timestamp == null ? "null" : timestamp) + ", " +
+                "\"content\":" + Arrays.toString(content) + ", " +
                 "\"port\":\"" + port + "\"" +
                 "}";
     }

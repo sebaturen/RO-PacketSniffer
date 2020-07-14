@@ -1,16 +1,15 @@
 package com.eclipse.sniffer.network;
 
-import org.pcap4j.core.PcapHandle;
-import org.pcap4j.core.PcapNativeException;
-import org.pcap4j.core.PcapNetworkInterface;
-import org.pcap4j.core.Pcaps;
+import org.pcap4j.core.*;
 import org.pcap4j.packet.IpV4Packet;
 import org.pcap4j.packet.Packet;
 import org.pcap4j.packet.TcpPacket;
 
+import java.io.EOFException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.concurrent.TimeoutException;
 
 public class PacketInterceptor {
 
@@ -20,7 +19,7 @@ public class PacketInterceptor {
         handle = getHandle();
     }
 
-    public String[] getNextPacket() throws Exception {
+    public NetPacket getNextPacket() throws PcapNativeException, NotOpenException, EOFException, TimeoutException {
 
         Packet packet = handle.getNextPacketEx();
         if (packet.contains(IpV4Packet.class)) {
@@ -32,13 +31,12 @@ public class PacketInterceptor {
                 TcpPacket.TcpHeader tcpPacket = packet.get(TcpPacket.class).getHeader();
                 byte[] evPacket = packet.get(TcpPacket.class).getPayload().getRawData();
 
-                return new String[]{ convertBytesToHex(evPacket), ""+tcpPacket.getDstPort().valueAsInt() };
-
+                return new NetPacket(evPacket, tcpPacket.getDstPort().valueAsInt());
             }
 
         }
 
-        throw new Exception("not correct type");
+        return null;
 
     }
 
@@ -68,32 +66,5 @@ public class PacketInterceptor {
 
     }
 
-    /**
-     * Convert byte[] -> String [AA BB CC ...]
-     * @param bytes
-     * @return
-     */
-    private String convertBytesToHex(byte[] bytes) {
-
-        StringBuilder result = new StringBuilder();
-
-        for (byte temp : bytes) {
-
-            int decimal = (int) temp & 0xff;  // bytes widen to int, need mask, prevent sign extension
-
-
-            String hex = Integer.toHexString(decimal).toUpperCase();
-
-            if (hex.length() == 1) {
-                hex = "0"+ hex;
-            }
-
-            result.append(hex+" ");
-
-        }
-        return result.toString();
-
-
-    }
 
 }

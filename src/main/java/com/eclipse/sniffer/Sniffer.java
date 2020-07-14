@@ -1,9 +1,13 @@
 package com.eclipse.sniffer;
 
+import com.eclipse.characters.CharacterDetail;
 import com.eclipse.guildWoeBreaker.WoEBreaker;
+import com.eclipse.sniffer.network.NetPacket;
 import com.eclipse.sniffer.network.PacketDecryption;
-import com.eclipse.sniffer.network.PacketDetail;
+import com.eclipse.sniffer.network.ROPacketDetail;
 import com.eclipse.sniffer.network.PacketInterceptor;
+
+import java.util.List;
 
 public class Sniffer {
 
@@ -16,100 +20,12 @@ public class Sniffer {
         new Thread(() -> {
             while(true) {
                 try {
-                    pDecrypt.decryption("FB 07 E3 A5 04 00 E1 02 00 00 00 00 00 00 39 00 00 00 00 00 5E 01 00 00 00", 111);
-                    System.out.println("PACHET 1");
-                    pDecrypt.decryption("FD 09 5F 00 00 6D A4 04 00 D7 AB 04 00 96 00 00 00 00 00 00 00 00 00 0A " +
-                            "00 04 00 F0 05 00 00 38 08 00 00 00 00 FE AD 9D 10 FA 00 54 00 00 00 00 00 00 00 00 00 B5 " +
-                            "03 00 00 0C 00 00 00 02 00 00 00 00 00 1B C6 71 C0 67 A8 05 05 63 00 00 00 FF FF FF FF FF " +
-                            "FF FF FF 00 00 00 41 6E 61 73 75 80 00 E1 02 00 00 01 CB 0A 01 00 2F 63 AE 00 00 00 00 00 " +
-                            "CC 0A 55 A6 04 00 00 00 00 00 00 00 00 00 01 00 00 00 CB 0A 02 00 F9 C3 47 05 00 00 00 00 " +
-                            "CC 0A 55 A6 04 00 00 00 00 00 00 00 00 00 02 00 00 00 CB 0A 01 00 33 63 AE 00 00 00 00 00 " +
-                            "CC 0A 55 A6 04 00 00 00 00 00 00 00 00 00 01 00 00 00 CB 0A 02 00 FE C3 47 05 00 00 00 00 " +
-                            "CC 0A 55 A6 04 00 00 00 00 00 00 00 00 00 02 00 00 00 CB 0A 01 00 54 65 AE 00 00 00 00 00 " +
-                            "CC 0A 55 A6 04 00 00 00 00 00 00 00 00 00 01 00 00 00 CB 0A 02 00 2E C7 47 05 00 00 00 00 " +
-                            "CC 0A 55 A6 04 00 00 00 00 00 00 00 00 00 02 00 00 00 9E 00 47 CD 00 00 F9 01 00 00 01 6F " +
-                            "00 67 00 0C 06 01 00 9E 00 4D CD 00 00 0B 04 00 00 01 70 00 67 00 06 09 01 00 9E 00 4E CD " +
-                            "00 00 16 1D 00 00 01 6E 00 67 00 0C 0C 01 00 FE 09 5E 00 05 4F CD 00 00 00 00 00 00 84 00 " +
-                            "00 00 00 00 00 00 00 00 AA 0A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 05 00 00 00 " +
-                            "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 1B C6 70 00 00 5A 00 00 00 FF FF FF " +
-                            "FF FF FF FF FF 00 00 00 53 6F 6C 69 64 20 4E 6F 76 75 73 FD 09 65 00 05 4F CD 00 00 00 00 " +
-                            "00 00 84 00 00 00 00 00 00 00 00 00 AA 0A 00 00 00 00 00 00 00 00 00 00 00 00 1C AE 9D 10 " +
-                            "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 1B C6 71 C0 " +
-                            "67 A8 00 00 5A 00 00 00 FF FF FF FF FF FF FF FF 00 00 00 53 6F 6C 69 64 20 4E 6F 76 75 73 " +
-                            "88 00 4F CD 00 00 6F 00 67 00 E1 02 4F CD 00 00 6D A4 04 00 2E AE 9D 10 20 01 00 00 24 02 " +
-                            "00 00 45 01 00 00 01 00 00 00 00 00 00", 111);
-                    System.out.println("PACHET 2");
-                    pDecrypt.decryption("83 09 6E 02 55 A6 04 00 01 0F 27 00 00 0F 27 00 00 01 00 00 00 00 00 00 " +
-                            "00 00 00 00 00 C8 08 55 A6 04 00 FF A0 04 00 D0 AE 9D 10 00 00 00 00 00 00 00 00 00 00 00 " +
-                            "00 00 00 00 02 00 00 00 00 0E 08 E3 A5 04 00 DC 25 00 00 94 3C 00 00 DE 01 39 00 E3 A5 04 " +
-                            "00 4F CD 00 00 39 AF 9D 10 58 02 00 00 68 01 00 00 74 34 00 00 0A 00 03 00 08 88 00 4F CD " +
-                            "00 00 6D 00 67 00 83 09 32 00 E3 A5 04 00 01 E8 03 00 00 E8 03 00 00 01 00 00 00 00 00 00 " +
-                            "00 00 00 00 00 83 09 2E 00 E3 A5 04 00 01 F4 01 00 00 F4 01 00 00 01 00 00 00 00 00 00 00 " +
-                            "00 00 00 00 0E 08 11 B3 04 00 19 3F 00 00 EE 47 00 00 C8 01 12 00 43 02 00 00 11 B3 04 00 " +
-                            "DE 00 01 96 01 2E 00 11 B3 04 00 00 0E 08 6D A4 04 00 AC 2A 00 00 F1 2B 00 00 FD 09 65 00 " +
-                            "05 4F CD 00 00 00 00 00 00 84 00 00 00 00 00 00 00 00 00 AA 0A 00 00 00 00 00 00 00 00 00 " +
-                            "00 00 00 54 AF 9D 10 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 " +
-                            "00 00 00 1B 46 71 BC 67 A8 00 00 5A 00 00 00 FF FF FF FF FF FF FF FF 00 00 00 53 6F 6C 69 " +
-                            "64 20 4E 6F 76 75 73", 111);
-                    System.out.println("PACHET 3");
-                    pDecrypt.decryption("B0 00 07 00 66 00 00 00 CA 09 17 00 89 CD 00 00 D6 BB 04 00 6E 00 62 00 " +
-                            "86 00 00 00 01 01 01 CA 09 17 00 F1 CC 00 00 D6 BB 04 00 6E 00 63 00 86 00 00 00 01 01 01 " +
-                            "CA 09 17 00 F2 CC 00 00 D6 BB 04 00 6E 00 64 00 86 00 00 00 01 01 01 CA 09 17 00 7F CD 00 " +
-                            "00 D6 BB 04 00 6E 00 65 00 86 00 00 00 01 01 01 CA 09 17 00 95 CD 00 00 D6 BB 04 00 6E 00 " +
-                            "66 00 86 00 00 00 01 01 01 CA 09 17 00 B7 CD 00 00 D6 BB 04 00 6E 00 67 00 86 00 00 00 01 " +
-                            "01 01 CA 09 17 00 68 CD 00 00 D6 BB 04 00 6E 00 68 00 86 00 00 00 01 01 01 CA 09 17 00 E3 " +
-                            "CD 00 00 D6 BB 04 00 6E 00 69 00 86 00 00 00 01 01 01 CA 09 17 00 DC CD 00 00 D6 BB 04 00 " +
-                            "6F 00 62 00 86 00 00 00 01 01 01 CA 09 17 00 05 CE 00 00 D6 BB 04 00 6F 00 63 00 86 00 00 " +
-                            "00 01 01 01 CA 09 17 00 19 CE 00 00 D6 BB 04 00 6F 00 64 00 86 00 00 00 01 01 01 CA 09 17 " +
-                            "00 5D CD 00 00 D6 BB 04 00 6F 00 65 00 86 00 00 00 01 01 01 CA 09 17 00 5E CD 00 00 D6 BB " +
-                            "04 00 6F 00 66 00 86 00 00 00 01 01 01 CA 09 17 00 5F CD 00 00 D6 BB 04 00 6F 00 67 00 86 " +
-                            "00 00 00 01 01 01 CA 09 17 00 62 CD 00 00 D6 BB 04 00 6F 00 68 00 86 00 00 00 01 01 01 CA " +
-                            "09 17 00 63 CD 00 00 D6 BB 04 00 6F 00 69 00 86 00 00 00 01 01 01 CA 09 17 00 64 CD 00 00 " +
-                            "D6 BB 04 00 70 00 62 00 86 00 00 00 01 01 01 CA 09 17 00 65 CD 00 00 D6 BB 04 00 70 00 63 " +
-                            "00 86 00 00 00 01 01 01 CA 09 17 00 66 CD 00 00 D6 BB 04 00 70 00 64 00 86 00 00 00 01 01 " +
-                            "01 CA 09 17 00 69 CD 00 00 D6 BB 04 00 70 00 65 00 86 00 00 00 01 01 01 CA 09 17 00 6A CD " +
-                            "00 00 D6 BB 04 00 70 00 66 00 86 00 00 00 01 01 01 CA 09 17 00 3C CE 00 00 D6 BB 04 00 70 " +
-                            "00 67 00 86 00 00 00 01 01 01 CA 09 17 00 3D CE 00 00 D6 BB 04 00 70 00 68 00 86 00 00 00 " +
-                            "01 01 01 CA 09 17 00 3E CE 00 00 D6 BB 04 00 70 00 69 00 86 00 00 00 01 01 01 CA 09 17 00 " +
-                            "3F CE 00 00 D6 BB 04 00 71 00 62 00 86 00 00 00 01 01 01 CA 09 17 00 48 CE 00 00 D6 BB 04 " +
-                            "00 71 00 63 00 86 00 00 00 01 01 01 CA 09 17 00 5D CE 00 00 D6 BB 04 00 71 00 64 00 86 00 " +
-                            "00 00 01 01 01 CA 09 17 00 7B CD 00 00 D6 BB 04 00 71 00 65 00 86 00 00 00 01 01 01 CA 09 " +
-                            "17 00 71 CD 00 00 D6 BB 04 00 71 00 66 00 86 00 00 00 01 01 01 CA 09 17 00 72 CD 00 00 D6 " +
-                            "BB 04 00 71 00 67 00 86 00 00 00 01 01 01 CA 09 17 00 74 CD 00 00 D6 BB 04 00 71 00 68 00 " +
-                            "86 00 00 00 01 01 01 CA 09 17 00 75 CD 00 00 D6 BB 04 00 71 00 69 00 86 00 00 00 01 01 01 " +
-                            "CA 09 17 00 76 CD 00 00 D6 BB 04 00 72 00 62 00 86 00 00 00 01 01 01 CA 09 17 00 E4 CD 00 " +
-                            "00 D6 BB 04 00 72 00 63 00 86 00 00 00 01 01 01 CA 09 17 00 F6 CD 00 00 D6 BB 04 00 72 00 " +
-                            "64 00 86 00 00 00 01 01 01 CA 09 17 00 E6 CD 00 00 D6 BB 04 00 72 00 65 00 86 00 00 00 01 " +
-                            "01 01 CA 09 17 00 07 CB 00 00 D6 BB 04 00 72 00 66 00 86 00 00 00 01 01 01 CA 09 17 00 08 " +
-                            "CB 00 00 D6 BB 04 00 72 00 67 00 86 00 00 00 01 01 01 CA 09 17 00 91 CC 00 00 D6 BB 04 00 " +
-                            "72 00 68 00 86 00 00 00 01 01 01 CA 09 17 00 BD CC 00 00 D6 BB 04 00 72 00 69 00 86 00 00 " +
-                            "00 01 01 01 CA 09 17 00 0E CD 00 00 D6 BB 04 00 73 00 63 00 86 00 00 00 01 01 01 CA 09 17 " +
-                            "00 10 CD 00 00 D6 BB 04 00 73 00 64 00 86 00 00 00 01 01 01 CA 09 17 00 43 CD 00 00 D6 BB " +
-                            "04 00 73 00 65 00 86 00 00 00 01 01 01 CA 09 17 00 A6 CD 00 00 D6 BB 04 00 73 00 66 00 86 " +
-                            "00 00 00 01 01 01 CA 09 17 00 AF CD 00 00 D6 BB 04 00 73 00 67 00 86 00 00 00 01 01 01 CA " +
-                            "09 17 00 B1 CD 00 00 D6 BB 04 00 73 00 68 00 86 00 00 00 01 01 01 CA 09 17 00 B6 CD 00 00 " +
-                            "D6 BB 04 00 73 00 69 00 86 00 00 00 01 01 01 CA 09 17 00 C0 CD 00 00 D6 BB 04 00 74 00 64 " +
-                            "00 86 00 00 00 01 01 01 CA 09 17 00 C1 CD 00 00 D6 BB 04 00 74 00 65 00 86 00 00 00 01 01 " +
-                            "01 CA 09 17 00 C3 CD 00 00 D6 BB 04 00 74 00 66 00 86 00 00 00 01 01 01 CA 09 17 00 C4 CD " +
-                            "00 00 D6 BB 04 00 74 00 67 00 86 00 00 00 01 01 01 CA 09 17 00 CE CD 00 00 D6 BB 04 00 74 " +
-                            "00 68 00 86 00 00 00 01 01 01 CA 09 17 00 D9 CD 00 00 D6 BB 04 00 74 00 69 00 86 00 00 00 " +
-                            "01 01 01 CA 09 17 00 DA CD 00 00 D6 BB 04 00 75 00 65 00 86 00 00 00 01 01 01 CA 09 17 00 " +
-                            "DD CD 00 00 D6 BB 04 00 75 00 66 00 86 00 00 00 01 01 01 CA 09 17 00 DE CD 00 00 D6 BB 04 " +
-                            "00 75 00 67 00 86 00 00 00 01 01 01 CA 09 17 00 E5 CD 00 00 D6 BB 04 00 75 00 68 00 86 00 " +
-                            "00 00 01 01 01 CA 09 17 00 E8 CD 00 00 D6 BB 04 00 75 00 69 00 86 00 00 00 01 01 01 CA 09 " +
-                            "17 00 E9 CD 00 00 D6 BB 04 00 76 00 66 00 86 00 00 00 01 01 01 CA 09 17 00 EA CD 00 00 D6 " +
-                            "BB 04 00 76 00 67 00 86 00 00 00 01 01 01 CA 09 17 00 EB CD 00 00 D6 BB 04 00 76 00 68 00 " +
-                            "86 00 00 00 01 01 01 CA", 111);
-                    System.out.println("PACHET 4");
-                    pDecrypt.decryption("09 17 00 EC CD 00 00 D6 BB 04 00 76 00 69 00 86 00 00 00 01 01 01", 111);
-
-                    System.out.println("FINISH! (?)");
-
-                    break;
-                    //String[] sPacket = pkInter.getNextPacket();
-                    //pDecrypt.decryption(sPacket[0], Integer.parseInt(sPacket[1]));
+                    NetPacket netPacket = pkInter.getNextPacket();
+                    if (netPacket != null) {
+                        pDecrypt.decryption(netPacket);
+                    }
                 } catch (Exception e) {
-                    //e.printStackTrace();
+                    // Exception
                 }
 
             }
@@ -123,23 +39,17 @@ public class Sniffer {
         new Thread(() -> {
 
             do {
-                PacketDetail pd = PacketDecryption.getPacket();
+                ROPacketDetail pd = PacketDecryption.getPacket();
 
                 if (pd != null) {
                     switch (pd.getName()) {
                         case LOCAL_BROADCAST:
                             WoEBreaker.process(pd);
                             break;
-                        case ITEM_DISAPPEARED:
-                                //System.out.println(pd);
-                            break;
-                        case PARTY_DEAD:
-                            System.out.println(pd);
+                        case ACTOR_EXISTS: case ACTOR_CONNECTED: case ACTOR_MOVE:
+                            CharacterDetail.process(pd);
                             break;
                         case UNKNOWN:
-                            System.out.println(pd);
-                            break;
-                        default:
                             System.out.println(pd);
                     }
                 }
