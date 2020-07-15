@@ -22,6 +22,7 @@ public class Sniffer {
 
         netPacketAddNotification();
         packetAddNotification();
+
     }
 
     /**
@@ -47,13 +48,13 @@ public class Sniffer {
 
             ROPacketDetail pd;
             while( (pd = PacketDecryption.getPacket()) != null) {
-                System.out.println(pd);
+                //System.out.println(pd);
                 switch (pd.getName()) {
                     case LOCAL_BROADCAST:
                         WoEBreaker.process(pd);
                         break;
                     case ACTOR_EXISTS: case ACTOR_CONNECTED: case ACTOR_MOVE:
-                        //CharacterDetail.process(pd);
+                        CharacterDetail.process(pd);
                         break;
                     case SHOW_EQUIP:
                         //CharacterDetail.process(pd);

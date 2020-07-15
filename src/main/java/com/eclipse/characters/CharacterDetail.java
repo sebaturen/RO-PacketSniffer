@@ -25,6 +25,8 @@ public class CharacterDetail {
     public static final int MID_HEAD_START = 35;
     public static final int HAIR_COLOR_START = 37;
     public static final int CLOTHES_COLOR_START = 39;
+    public static final int GUILD_ID_START = 45;
+    public static final int EMBLEM_ID_START = 49;
     public static final int SEX_START = 58;
     public static final int LV_START = 65;
     public static final int NAME_START = 80;
@@ -67,12 +69,16 @@ public class CharacterDetail {
                 int namePost = NAME_START;
                 int sexPos = SEX_START;
                 int lvPost = LV_START;
+                int guildPost = GUILD_ID_START;
+                int emblemPost = EMBLEM_ID_START;
                 if (pd.getName() == PacketList.ACTOR_MOVE) {
                     topPost += 4;
                     midPost += 4;
                     hairColor += 4;
                     clothesColor += 4;
                     sexPos += 4;
+                    guildPost += 4;
+                    emblemPost += 4;
                     lvPost += 6;
                     namePost += 6;
                 } else if (pd.getName() == PacketList.ACTOR_CONNECTED) {
@@ -84,7 +90,9 @@ public class CharacterDetail {
                 byte[] bMidHeadId      = NetPacket.reverseContent(Arrays.copyOfRange(inf, midPost, midPost+2));
                 byte[] bHairColorId    = NetPacket.reverseContent(Arrays.copyOfRange(inf, hairColor, hairColor+2));
                 byte[] bClothesColorId = NetPacket.reverseContent(Arrays.copyOfRange(inf, clothesColor, clothesColor+2));
-                byte bSex            = inf[sexPos];
+                byte[] bGuildId        = NetPacket.reverseContent(Arrays.copyOfRange(inf, guildPost, guildPost+4));
+                byte[] bEmblemId       = NetPacket.reverseContent(Arrays.copyOfRange(inf, emblemPost, emblemPost+4));
+                byte bSex              = inf[sexPos];
                 byte[] bLv             = NetPacket.reverseContent(Arrays.copyOfRange(inf, lvPost, lvPost+2));
                 byte[] bName = Arrays.copyOfRange(inf, namePost, inf.length);
                 // Parse data
@@ -99,6 +107,8 @@ public class CharacterDetail {
                 short midHeadId   = (ByteBuffer.wrap(bMidHeadId)).getShort();
                 short hairColorId = (ByteBuffer.wrap(bHairColorId)).getShort();
                 short clothesColorId = (ByteBuffer.wrap(bClothesColorId)).getShort();
+                int guildId       = (ByteBuffer.wrap(bGuildId)).getInt();
+                int emblemId      = (ByteBuffer.wrap(bEmblemId)).getInt();
                 short lvl         = (ByteBuffer.wrap(bLv)).getShort();
                 short sex         = bSex;
 
@@ -107,6 +117,8 @@ public class CharacterDetail {
                 pjInfo.addProperty("character_id", charId);
                 pjInfo.addProperty("name", new String(bName));
                 pjInfo.addProperty("job_id", jobId);
+                pjInfo.addProperty("guild_id", guildId);
+                pjInfo.addProperty("emblem_id", emblemId);
                 pjInfo.addProperty("lvl", lvl);
                 pjInfo.addProperty("sex", sex);
                 pjInfo.addProperty("hair_style_id", hairStyleId);
