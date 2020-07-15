@@ -25,12 +25,14 @@ public class PacketDecryption {
 
         try {
             packList.addAll(packetSplitter(netPacket));
-            Sniffer.packetAddNotification();
         } catch (Exception e) {
             System.out.println("Failed to decrypt packet! "+ e);
             System.out.println("PACKET: "+ netPacket);
             System.out.println("PORT: "+ netPacket.getPort());
-            System.out.println("LAST PACKETS: "+ Arrays.toString(lastPackets.get(netPacket.getPort())));
+            System.out.print("LAST 5 PACKETS!: ");
+            for(byte[] p : lastPackets) {
+                System.out.print(Arrays.toString(p)+", ");
+            }
         }
 
     }

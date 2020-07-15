@@ -12,6 +12,8 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
+    implementation 'com.google.code.gson:gson:2.8.6'
+
     compile 'org.pcap4j:pcap4j-core:1.+'
     compile 'org.pcap4j:pcap4j-packetfactory-static:1.+'
 }

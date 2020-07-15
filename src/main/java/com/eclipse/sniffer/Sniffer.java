@@ -7,55 +7,66 @@ import com.eclipse.sniffer.network.PacketDecryption;
 import com.eclipse.sniffer.network.ROPacketDetail;
 import com.eclipse.sniffer.network.PacketInterceptor;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Sniffer {
+    private static PacketInterceptor pInter = new PacketInterceptor();
+    private static PacketDecryption pDecrypt = new PacketDecryption();
 
     public static void main(String... args) {
 
-        PacketInterceptor pkInter = new PacketInterceptor();
-        PacketDecryption pDecrypt = new PacketDecryption();
-
-        // Packet capture thread
-        new Thread(() -> {
-            while(true) {
-                try {
-                    NetPacket netPacket = pkInter.getNextPacket();
-                    if (netPacket != null) {
-                        pDecrypt.decryption(netPacket);
-                    }
-                } catch (Exception e) {
-                    // Exception
-                }
-
-            }
-        }).start();
-
+        netPacketAddNotification();
+        packetAddNotification();
     }
 
+    /**
+     * List a new packet exist
+     */
+    public static void netPacketAddNotification() {
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        executor.scheduleAtFixedRate(() -> {
+            while (pInter.packetList.size() != 0) {
+                NetPacket np = pInter.packetList.remove(0);
+                pDecrypt.decryption(np);
+            }
+        }, 0, 100, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * Start when a new packet is added.
+     */
     public static void packetAddNotification() {
 
-        // Sniffer packets:
-        new Thread(() -> {
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        executor.scheduleAtFixedRate(() -> {
 
-            do {
-                ROPacketDetail pd = PacketDecryption.getPacket();
-
-                if (pd != null) {
-                    switch (pd.getName()) {
-                        case LOCAL_BROADCAST:
-                            WoEBreaker.process(pd);
-                            break;
-                        case ACTOR_EXISTS: case ACTOR_CONNECTED: case ACTOR_MOVE:
-                            CharacterDetail.process(pd);
-                            break;
-                        case UNKNOWN:
-                            System.out.println(pd);
-                    }
+            ROPacketDetail pd;
+            while( (pd = PacketDecryption.getPacket()) != null) {
+                System.out.println(pd);
+                switch (pd.getName()) {
+                    case LOCAL_BROADCAST:
+                        WoEBreaker.process(pd);
+                        break;
+                    case ACTOR_EXISTS: case ACTOR_CONNECTED: case ACTOR_MOVE:
+                        //CharacterDetail.process(pd);
+                        break;
+                    case SHOW_EQUIP:
+                        //CharacterDetail.process(pd);
+                        break;
+                    case UNKNOWN:
+                        System.out.println("UNKNOWN!");
+                        System.out.println(pd);
+                        break;
                 }
+            }
 
-            } while (PacketDecryption.sizePackets() > 0);
-        }).start();
+        }, 0, 100, TimeUnit.MILLISECONDS);
+
 
     }
 
