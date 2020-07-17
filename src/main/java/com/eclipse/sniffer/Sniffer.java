@@ -1,15 +1,13 @@
 package com.eclipse.sniffer;
 
-import com.eclipse.characters.CharacterDetail;
+import com.eclipse.gameDetails.CharacterDetail;
+import com.eclipse.gameDetails.GuildDetail;
 import com.eclipse.guildWoeBreaker.WoEBreaker;
 import com.eclipse.sniffer.network.NetPacket;
 import com.eclipse.sniffer.network.PacketDecryption;
 import com.eclipse.sniffer.network.ROPacketDetail;
 import com.eclipse.sniffer.network.PacketInterceptor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -48,7 +46,6 @@ public class Sniffer {
 
             ROPacketDetail pd;
             while( (pd = PacketDecryption.getPacket()) != null) {
-                //System.out.println(pd);
                 switch (pd.getName()) {
                     case LOCAL_BROADCAST:
                         WoEBreaker.process(pd);
@@ -56,8 +53,8 @@ public class Sniffer {
                     case ACTOR_EXISTS: case ACTOR_CONNECTED: case ACTOR_MOVE:
                         CharacterDetail.process(pd);
                         break;
-                    case SHOW_EQUIP:
-                        //CharacterDetail.process(pd);
+                    case ACTOR_INFO_NAME_PARTY_GUILD_TITLE:
+                        GuildDetail.process(pd);
                         break;
                     case UNKNOWN:
                         System.out.println("UNKNOWN!");

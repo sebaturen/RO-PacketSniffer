@@ -42,6 +42,7 @@ public enum PacketList {
     CHARACTER_DELETE2_RESULT("0828"),
     CHARACTER_DELETE2_CANCEL_RESULT("082C"),
     CHARACTER_DELETE2_ACCEPT_RESULT("082A"),
+    CHARACTER_CREATION_FAILED("006E"),
     // GUILD
     GUILD_MEMBER_MAP_CHANGE("01EC"),
     GUILD_MASTER_MEMBER("014E"),
@@ -59,6 +60,7 @@ public enum PacketList {
     GUILD_LEAVE("015A"),
     GUILD_REQUEST("016A"),
     GUILD_INVITE_RESULT("0169"),
+    GUILD_SKILLS_LIST("0162"),
     // VENDOR
     VENDOR_ITEMS_LIST("0A8D"),
     // BUYING
@@ -175,6 +177,10 @@ public enum PacketList {
     INVENTORY_ITEM_REMOVED("07FA"),
     INVENTORY_ITEM_REMOVED_2("00AF"),
     INVENTORY_ITEM_NO_STACKABLE("0A0D"),
+    // MVP
+    MVP_ITEM("010A"),
+    MVP_YOU("010B"),
+    MVP_OTHER("010C"),
     // ??
     PRIVATE_MESSAGE_SENT("09DF"),
     COMBO_DELAY("01D2"),
@@ -225,6 +231,7 @@ public enum PacketList {
     QUIT_RESPONSE("018B"),
     CAST_CANCELLED("01B9"),
     ACTION_UI("0AF0"),
+    SYSTEM_CHAT("009A"),
     // EMPTY
     EMPTY_1("0870"),
     EMPTY_2("0838"),
@@ -242,7 +249,13 @@ public enum PacketList {
     EMPTY_14("0929"),
     EMPTY_15("092A"),
     EMPTY_16("0100"),
-    EMPTY_17("0940");
+    EMPTY_17("0940"),
+    EMPTY_18("085A"),
+    EMPTY_19("00EE"),
+    EMPTY_20("09BA"),
+    EMPTY_21("0862"),
+    EMPTY_22("0864"),
+    EMPTY_23("0868");
 
     private final String ident;
 

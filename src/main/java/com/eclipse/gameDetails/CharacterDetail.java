@@ -1,6 +1,6 @@
-package com.eclipse.characters;
+package com.eclipse.gameDetails;
 
-import com.eclipse.sniffer.Sniffer;
+import com.eclipse.apiRequest.APIRequest;
 import com.eclipse.sniffer.enums.PacketList;
 import com.eclipse.sniffer.network.NetPacket;
 import com.eclipse.sniffer.network.PacketDecryption;
@@ -44,9 +44,9 @@ public class CharacterDetail {
 
     /**
      * PACKET DOCUMENTATION:
-     * '09FF' => ['actor_exists', 'v C a4 a4 v3 V v2 V2 v7 a4 a2 v V C2 a3 C3 v2 V2 C v Z*',    [qw(len object_type ID charID walk_speed opt1 opt2 option type hair_style weapon shield lowhead         tophead midhead hair_color clothes_color head_dir costume guildID emblemID manner opt3 stance sex coords xSize ySize state lv font maxHP HP isBoss opt4 name)]],
-     * '09FE' => ['actor_connected', 'v C a4 a4 v3 V v2 V2 v7 a4 a2 v V C2 a3 C2 v2 V2 C v Z*', [qw(len object_type ID charID walk_speed opt1 opt2 option type hair_style weapon shield lowhead         tophead midhead hair_color clothes_color head_dir costume guildID emblemID manner opt3 stance sex coords xSize ySize       lv font maxHP HP isBoss opt4 name)]],
-     * '09FD' => ['actor_moved', 'v C a4 a4 v3 V v2 V2 v V v6 a4 a2 v V C2 a6 C2 v2 V2 C v Z*', [qw(len object_type ID charID walk_speed opt1 opt2 option type hair_style weapon shield lowhead tick(4) tophead midhead hair_color clothes_color head_dir costume guildID emblemID manner opt3 stance sex coords xSize ySize       lv font maxHP HP isBoss opt4 name)]],
+     * '09FF' => ['actor_exists',    'v C a4 a4 v3 V v2 V2 v7 a4 a2 v V C2 a3 C3 v2 V2 C v Z*',     [qw(len object_type ID charID walk_speed opt1 opt2 option type hair_style weapon shield lowhead         tophead midhead hair_color clothes_color head_dir costume guildID emblemID manner opt3 stance sex coords xSize ySize state lv font maxHP HP isBoss opt4 name)]],
+     * '09FE' => ['actor_connected', 'v C a4 a4 v3 V v2 V2 v7 a4 a2 v V C2 a3 C2 v2 V2 C v Z*',     [qw(len object_type ID charID walk_speed opt1 opt2 option type hair_style weapon shield lowhead         tophead midhead hair_color clothes_color head_dir costume guildID emblemID manner opt3 stance sex coords xSize ySize       lv font maxHP HP isBoss opt4 name)]],
+     * '09FD' => ['actor_moved',     'v C a4 a4 v3 V v2 V2 v V v6 a4 a2 v V C2 a6 C2 v2 V2 C v Z*', [qw(len object_type ID charID walk_speed opt1 opt2 option type hair_style weapon shield lowhead tick(4) tophead midhead hair_color clothes_color head_dir costume guildID emblemID manner opt3 stance sex coords xSize ySize       lv font maxHP HP isBoss opt4 name)]],
      * @param pd
      */
     private void processActor(ROPacketDetail pd) {
@@ -121,16 +121,18 @@ public class CharacterDetail {
                 pjInfo.addProperty("emblem_id", emblemId);
                 pjInfo.addProperty("lvl", lvl);
                 pjInfo.addProperty("sex", sex);
-                pjInfo.addProperty("hair_style_id", hairStyleId);
                 pjInfo.addProperty("weapon_id", weaponId);
                 pjInfo.addProperty("shield_id", shieldId);
                 pjInfo.addProperty("low_head_view_id", lowHeadId);
                 pjInfo.addProperty("top_head_view_id", topHeadId);
                 pjInfo.addProperty("mid_head_view_id", midHeadId);
+                pjInfo.addProperty("hair_style_id", hairStyleId);
                 pjInfo.addProperty("hair_color_id", hairColorId);
                 pjInfo.addProperty("clothes_color_id", clothesColorId);
 
+                APIRequest.shared.PUT("/characters/"+ accId +"/"+ charId, pjInfo);
                 System.out.println(pjInfo);
+
             }
         }).start();
 

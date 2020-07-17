@@ -19,7 +19,7 @@ public class PacketInterceptor {
     public List<NetPacket> packetList = new ArrayList<>();
     public static final int SNAP_LEN = 65536;
     public static final int TIMEOUT = 10;
-    public static final int BUFFER_SIZE = 1024 * 1024 * 1024;
+    public static final int BUFFER_SIZE = 1024 * 1024;// * 1024;
 
     public PacketInterceptor() {
         prepareHandle();
