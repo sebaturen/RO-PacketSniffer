@@ -78,6 +78,8 @@ public enum PacketList {
     SKILL_ADD("0111"),
     SKILL_USE_FAILED("0110"),
     SKILL_POST_DELAY("043D"),
+    SKILL_UPDATE("010E"),
+    SKILL_POST_DELAYLIST("0985"),
     // PET
     PET_EMOTION("01AA"),
     PET_INFO2("01A4"),
@@ -98,6 +100,7 @@ public enum PacketList {
     CHAT_JOIN_RESULT("00DA"),
     CHAT_MODIFIED("00DF"),
     CHAT_USER_LEAVE("00DD"),
+    CHAT_CREATED("00D6"),
     // SPELL
     SPELL_AREA("011F"),
     SPELL_AREA_DISAPPEARS("0120"),
@@ -177,12 +180,18 @@ public enum PacketList {
     INVENTORY_ITEM_REMOVED("07FA"),
     INVENTORY_ITEM_REMOVED_2("00AF"),
     INVENTORY_ITEM_NO_STACKABLE("0A0D"),
+    INVENTORY_ITEM_FAVORITE("0908"),
     // MVP
     MVP_ITEM("010A"),
     MVP_YOU("010B"),
     MVP_OTHER("010C"),
-    // ??
+    // MESSAGE
+    MESSAGE_STRING("0291"),
+    MESSAGE_STRING2("07E2"),
+    PRIVATE_MESSAGE("09DE"),
     PRIVATE_MESSAGE_SENT("09DF"),
+    // ??
+    PVP_RANK("019A"),
     COMBO_DELAY("01D2"),
     UNEQUIP_ITEM("099A"),
     EQUIP_ITEM("0999"),
@@ -194,12 +203,10 @@ public enum PacketList {
     SEARCH_STORE_RESULT("0836"),
     MEMO_SUCCESS("011E"),
     WARP_PORTAL_LIST("011C"),
-    PRIVATE_MESSAGE("09DE"),
     HIGH_JUMP("08D2"),
     HIGH_JUMP_2("01FF"),
     REVOLVING_ENTITY("01D0"),
     LOCAL_BROADCAST("01C3"),
-    MESSAGE_STRING("0291"),
     RATES_INFO_2("097B"),
     STATS_INFO("00BD"),
     ACHIEVEMENT_LIST("0A23"),
@@ -231,31 +238,7 @@ public enum PacketList {
     QUIT_RESPONSE("018B"),
     CAST_CANCELLED("01B9"),
     ACTION_UI("0AF0"),
-    SYSTEM_CHAT("009A"),
-    // EMPTY
-    EMPTY_1("0870"),
-    EMPTY_2("0838"),
-    EMPTY_3("087E"),
-    EMPTY_4("087F"),
-    EMPTY_5("0919"),
-    EMPTY_6("091A"),
-    EMPTY_7("091B"),
-    EMPTY_8("091C"),
-    EMPTY_9("091D"),
-    EMPTY_10("0899"),
-    EMPTY_11("091E"),
-    EMPTY_12("0924"),
-    EMPTY_13("0927"),
-    EMPTY_14("0929"),
-    EMPTY_15("092A"),
-    EMPTY_16("0100"),
-    EMPTY_17("0940"),
-    EMPTY_18("085A"),
-    EMPTY_19("00EE"),
-    EMPTY_20("09BA"),
-    EMPTY_21("0862"),
-    EMPTY_22("0864"),
-    EMPTY_23("0868");
+    SYSTEM_CHAT("009A");
 
     private final String ident;
 

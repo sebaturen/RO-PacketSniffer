@@ -98,6 +98,7 @@ public class CharacterDetail {
                 // Parse data
                 int accId       = (ByteBuffer.wrap(bAccId)).getInt();
                 int charId      = (ByteBuffer.wrap(bCharId)).getInt();
+                String name     = new String(bName);
                 short jobId     = (ByteBuffer.wrap(bJobId)).getShort();
                 short hairStyleId = (ByteBuffer.wrap(bHairStyleId)).getShort();
                 int weaponId    = (ByteBuffer.wrap(bWeaponId)).getInt();
@@ -112,27 +113,30 @@ public class CharacterDetail {
                 short lvl         = (ByteBuffer.wrap(bLv)).getShort();
                 short sex         = bSex;
 
-                JsonObject pjInfo = new JsonObject();
-                pjInfo.addProperty("account_id", accId);
-                pjInfo.addProperty("character_id", charId);
-                pjInfo.addProperty("name", new String(bName));
-                pjInfo.addProperty("job_id", jobId);
-                pjInfo.addProperty("guild_id", guildId);
-                pjInfo.addProperty("emblem_id", emblemId);
-                pjInfo.addProperty("lvl", lvl);
-                pjInfo.addProperty("sex", sex);
-                pjInfo.addProperty("weapon_id", weaponId);
-                pjInfo.addProperty("shield_id", shieldId);
-                pjInfo.addProperty("low_head_view_id", lowHeadId);
-                pjInfo.addProperty("top_head_view_id", topHeadId);
-                pjInfo.addProperty("mid_head_view_id", midHeadId);
-                pjInfo.addProperty("hair_style_id", hairStyleId);
-                pjInfo.addProperty("hair_color_id", hairColorId);
-                pjInfo.addProperty("clothes_color_id", clothesColorId);
+                if (name.length() != 0) {
 
-                APIRequest.shared.PUT("/characters/"+ accId +"/"+ charId, pjInfo);
-                System.out.println(pjInfo);
+                    JsonObject pjInfo = new JsonObject();
+                    pjInfo.addProperty("account_id", accId);
+                    pjInfo.addProperty("character_id", charId);
+                    pjInfo.addProperty("name", name);
+                    pjInfo.addProperty("job_id", jobId);
+                    pjInfo.addProperty("guild_id", guildId);
+                    pjInfo.addProperty("emblem_id", emblemId);
+                    pjInfo.addProperty("lvl", lvl);
+                    pjInfo.addProperty("sex", sex);
+                    pjInfo.addProperty("weapon_id", weaponId);
+                    pjInfo.addProperty("shield_id", shieldId);
+                    pjInfo.addProperty("low_head_view_id", lowHeadId);
+                    pjInfo.addProperty("top_head_view_id", topHeadId);
+                    pjInfo.addProperty("mid_head_view_id", midHeadId);
+                    pjInfo.addProperty("hair_style_id", hairStyleId);
+                    pjInfo.addProperty("hair_color_id", hairColorId);
+                    pjInfo.addProperty("clothes_color_id", clothesColorId);
 
+                    APIRequest.shared.PUT("/characters/"+ accId +"/"+ charId, pjInfo);
+                    System.out.println(pjInfo);
+
+                }
             }
         }).start();
 

@@ -14,8 +14,8 @@ public class ROPacketDetail {
     private byte[] content;
     private int port;
 
-    public ROPacketDetail(PacketList name, String packetHeader, byte[] content, int port) {
-        this.name = name;
+    public ROPacketDetail(String packetHeader, byte[] content, int port) {
+        this.name = PacketList.getValue(packetHeader);
         this.packetHeader = packetHeader;
         this.content = content;
         this.port = port;

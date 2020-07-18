@@ -89,7 +89,9 @@ public class PacketDecryption {
                     }
                     // Save a correct info
                     packetInfo = Arrays.copyOfRange(sepContent, from, to);
-                    packetDetails.add(new ROPacketDetail(PacketList.getValue(pList), pList, packetInfo, netPacket.getPort()));
+                    if (packetInfo.length > 0) {
+                        packetDetails.add(new ROPacketDetail(pList, packetInfo, netPacket.getPort()));
+                    }
                     sepContent = Arrays.copyOfRange(sepContent, pSize, sepContent.length);
                 } else {
                     System.out.println("UNKNOWN PACKET ["+ pList +"] "+ Arrays.toString(sepContent) +" FULL PACKET -> "+ Arrays.toString(netPacket.getContent()));
