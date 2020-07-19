@@ -50,7 +50,10 @@ public class Sniffer {
                     case LOCAL_BROADCAST:
                         WoEBreaker.process(pd);
                         break;
-                    case ACTOR_EXISTS: case ACTOR_CONNECTED: case ACTOR_MOVE:
+                    case ACTOR_EXISTS:
+                    case ACTOR_CONNECTED:
+                    case ACTOR_MOVE:
+                    case SHOW_EQUIP:
                         CharacterDetail.process(pd);
                         break;
                     case ACTOR_INFO_NAME_PARTY_GUILD_TITLE:
