@@ -6,6 +6,9 @@ import java.util.Optional;
 public enum PacketList {
     UNKNOWN("-1"),
     UNKNOWN_2("0A96"),
+    UNKNOWN_3("0064"),
+    UNKNOWN_4("0A41"),
+    UNKNOWN_5("00B9"),
     // ACTOR
     ACTOR_EXISTS("09FF"),
     ACTOR_LOOK_AT("009C"),
@@ -82,6 +85,7 @@ public enum PacketList {
     SKILL_POST_DELAY("043D"),
     SKILL_UPDATE("010E"),
     SKILL_POST_DELAYLIST("0985"),
+    SKILL_DELETE("0441"),
     // PET
     PET_EMOTION("01AA"),
     PET_INFO2("01A4"),
@@ -125,6 +129,7 @@ public enum PacketList {
     PARTY_INVITE_RESULT("02C5"),
     PARTY_SHOW_PICKER("02B8"),
     PARTY_LEADER("07FC"),
+    PARTY_INVITE("02C6"),
     // MONSTER
     MONSTER_HP_INFO_TINY("0A36"),
     MONSTER_RANGED_ATTACK("0139"),
@@ -149,6 +154,8 @@ public enum PacketList {
     DEAL_REQUEST("01F4"),
     // NPC
     NPC_TALK("00B4"),
+    NPC_TALK_NUMBER("0142"),
+    NPC_TALK_TEXT("01D4"),
     NPC_TALK_CONTINUE("00B5"),
     NPC_TALK_RESPONSE("00B7"),
     NPC_IMAGE("01B3"),
@@ -196,7 +203,16 @@ public enum PacketList {
     MESSAGE_STRING2("07E2"),
     PRIVATE_MESSAGE("09DE"),
     PRIVATE_MESSAGE_SENT("09DF"),
+    // CARD
+    CART_INFO("0121"),
+    CART_ITEM_REMOVED("0125"),
+    CART_ITEM_ADDED("0A0B"),
+    // BOARD
+    SEARCH_STORE_OPEN("083A"),
+    SEARCH_STORE_RESULT("0836"),
+    SEARCH_STORE_FAIL("0837"),
     // ??
+    OPEN_UI("0AE2"),
     BUY_RESULT("00CA"),
     PVP_RANK("019A"),
     COMBO_DELAY("01D2"),
@@ -206,8 +222,6 @@ public enum PacketList {
     MILLENIUM_SHIELD("0440"),
     DEVOTION("01CF"),
     VENDER_ITEMS_LIST("0800"),
-    SEARCH_STORE_OPEN("083A"),
-    SEARCH_STORE_RESULT("0836"),
     MEMO_SUCCESS("011E"),
     WARP_PORTAL_LIST("011C"),
     HIGH_JUMP("08D2"),
@@ -215,7 +229,6 @@ public enum PacketList {
     REVOLVING_ENTITY("01D0"),
     LOCAL_BROADCAST("01C3"),
     RATES_INFO_2("097B"),
-    STATS_INFO("00BD"),
     ACHIEVEMENT_LIST("0A23"),
     FRIEND_LIST("0201"),
     SWITCH_CHARACTER("00B3"),
@@ -233,10 +246,13 @@ public enum PacketList {
     EXP("0ACC"),
     FRIEND_LOGON("0206"),
     ERRORS("0081"),
+    STATS_INFO("00BD"),
+    STAT_INFO("00BE"),
     STAT_INFO_1("00B0"),
     STAT_INFO_2("00B1"),
     STAT_INFO_3("0141"),
     STAT_INFO_4("0ACB"),
+    STAT_ADDED("00BC"),
     SYNC_REQUEST("0187"),
     RECEIVED_SYNC("007F"),
     EAC_KEY("0A7B"),
