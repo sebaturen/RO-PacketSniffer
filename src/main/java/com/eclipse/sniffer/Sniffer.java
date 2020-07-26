@@ -1,6 +1,8 @@
 package com.eclipse.sniffer;
 
+import com.eclipse.apiRequest.APIRequest;
 import com.eclipse.gameDetails.Actor;
+import com.eclipse.gameDetails.GeneralInfo;
 import com.eclipse.gameDetails.GuildDetail;
 import com.eclipse.guildWoeBreaker.WoEBreaker;
 import com.eclipse.sniffer.enums.PacketList;
@@ -8,6 +10,7 @@ import com.eclipse.sniffer.network.NetPacket;
 import com.eclipse.sniffer.network.PacketDecryption;
 import com.eclipse.sniffer.network.ROPacketDetail;
 import com.eclipse.sniffer.network.PacketInterceptor;
+import com.google.gson.JsonObject;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -59,6 +62,12 @@ public class Sniffer {
                     case ACTOR_INFO_NAME_PARTY_GUILD_TITLE:
                         Actor.process(pd);
                         break;
+                    case GUILD_EMBLEM:
+                        GuildDetail.process(pd);
+                        break;
+                    case SYSTEM_CHAT:
+                        GeneralInfo.process(pd);
+                        break;
                     case UNKNOWN:
                         System.out.println("UNKNOWN!");
                         System.out.println(pd);
@@ -67,8 +76,6 @@ public class Sniffer {
             }
 
         }, 0, 100, TimeUnit.MILLISECONDS);
-
-
     }
 
 }
