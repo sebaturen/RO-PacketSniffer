@@ -21,8 +21,8 @@ public class PacketInterceptor {
     public static final int TIMEOUT = 10;
     public static final int BUFFER_SIZE = 1024 * 1024;// * 1024;
 
-    public PacketInterceptor() {
-        prepareHandle();
+    public PacketInterceptor(String ip) {
+        prepareHandle(ip);
     }
 
     /**
@@ -48,11 +48,11 @@ public class PacketInterceptor {
      * Prepare NIC handle
      * @return
      */
-    private void prepareHandle() {
+    private void prepareHandle(String ip) {
 
         try {
 
-            InetAddress addr = InetAddress.getByName("192.168.100.119");
+            InetAddress addr = InetAddress.getByName(ip);
             //InetAddress addr = InetAddress.getByName("10.0.0.128");
             PcapNetworkInterface nif = Pcaps.getDevByAddress(addr);
 

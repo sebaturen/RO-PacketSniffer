@@ -15,7 +15,7 @@ import java.net.URL;
 
 public class APIRequest {
 
-    public static final String URL_API = "https://artofwar.cl/team_eclipse/rest";
+    public static final String URL_API = "https://panel.delmal.cl/rest";
     public static APIRequest shared = new APIRequest();
 
     public APIRequest() {

@@ -17,13 +17,20 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Sniffer {
-    private static PacketInterceptor pInter = new PacketInterceptor();
+
+    private static PacketInterceptor pInter;
     private static PacketDecryption pDecrypt = new PacketDecryption();
+    private static boolean verbose = false;
 
     public static void main(String... args) {
 
+        pInter = new PacketInterceptor(args[0]);
         netPacketAddNotification();
         packetAddNotification();
+
+        if (args.length == 2) {
+            verbose = Boolean.parseBoolean(args[1]);
+        }
 
     }
 
@@ -50,7 +57,9 @@ public class Sniffer {
 
             ROPacketDetail pd;
             while( (pd = PacketDecryption.getPacket()) != null) {
-                //System.out.println(pd);
+                if (verbose) {
+                    System.out.println(pd);
+                }
                 switch (pd.getName()) {
                     case LOCAL_BROADCAST:
                         WoEBreaker.process(pd);

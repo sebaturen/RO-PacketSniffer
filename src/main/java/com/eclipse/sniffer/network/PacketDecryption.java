@@ -94,12 +94,7 @@ public class PacketDecryption {
                     }
                     sepContent = Arrays.copyOfRange(sepContent, pSize, sepContent.length);
                 } else {
-                    System.out.println("UNKNOWN PACKET ["+ pList +"] "+ Arrays.toString(sepContent) +" FULL PACKET -> "+ Arrays.toString(netPacket.getContent()));
-                    System.out.print("LAST 5 PACKETS! ");
-                    for(byte[] p : lastPackets) {
-                        System.out.print(Arrays.toString(p)+", ");
-                    }
-                    System.out.println("");
+                    System.out.println("UNKNOWN PACKET ["+ pList +"] "+ Arrays.toString(sepContent)); // FULL PACKET -> "+ Arrays.toString(netPacket.getContent()));
                     sepContent = null;
                 }
             } while (sepContent != null && sepContent.length > 0);

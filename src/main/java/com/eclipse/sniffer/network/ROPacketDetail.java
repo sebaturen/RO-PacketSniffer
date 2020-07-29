@@ -44,7 +44,7 @@ public class ROPacketDetail {
                 "\"name\":" + (name == null ? "null" : name) + ", " +
                 "\"packetHeader\":" + (packetHeader == null ? "null" : "\"" + packetHeader + "\"") + ", " +
                 "\"timestamp\":" + (timestamp == null ? "null" : timestamp) + ", " +
-                "\"content\":" + Arrays.toString(content) + ", " +
+                //"\"content\":" + Arrays.toString(content) + ", " +
                 "\"port\":\"" + port + "\"" +
                 "}";
     }
