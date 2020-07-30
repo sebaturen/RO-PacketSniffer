@@ -1,10 +1,7 @@
 package com.eclipse.sniffer.network;
 
-import com.eclipse.sniffer.Sniffer;
-import com.eclipse.sniffer.enums.PacketList;
 import com.eclipse.sniffer.tables.RecvPackets;
 
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.*;
 

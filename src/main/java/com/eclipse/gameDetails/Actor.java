@@ -1,6 +1,7 @@
 package com.eclipse.gameDetails;
 
 import com.eclipse.apiRequest.APIRequest;
+import com.eclipse.apiRequest.APIRequestQueue;
 import com.eclipse.sniffer.enums.EnchantList;
 import com.eclipse.sniffer.enums.PacketList;
 import com.eclipse.sniffer.network.NetPacket;
@@ -28,18 +29,26 @@ public class Actor {
 
     }
 
+    public static final int OBJECT_TYPE = 0;
+    public static final int ACTOR_TYPE_CHARACTER = 0;
+    public static final int ACTOR_TYPE_MONSTER = 5;
+    public static final int ACTOR_TYPE_NPC = 6;
     private void processActor(ROPacketDetail pd) {
 
         new Thread(() -> {
             byte[] inf = pd.getContent();
-            if (inf[OBJECT_TYPE] == 0) {
-                processPlayerShowInfo(inf, pd.getName());
+            switch (inf[OBJECT_TYPE]) {
+                case ACTOR_TYPE_CHARACTER:
+                    processPlayerShowInfo(inf, pd.getName());
+                    break;
+                case ACTOR_TYPE_MONSTER:
+                    //processMonsterShowInfo(inf, pd.getName());
+                    break;
             }
         }).start();
 
     }
 
-    public static final int OBJECT_TYPE = 0;
     public static final int ID_START = 1;
     public static final int CHAR_ID_START = 5;
     public static final int JOB_ID_START = 19;
@@ -125,7 +134,7 @@ public class Actor {
         short sex         = bSex;
 
         // Check posible sniffer packet error
-        if (name.length() > 0 && emblemId >= 0 && guildId >= 0) {
+        if (name.length() > 0 && emblemId >= 0 && guildId >= 0 && lvl >= 1 && lvl <= 99) {
 
             JsonObject pjInfo = new JsonObject();
             pjInfo.addProperty("account_id", accId);
@@ -147,7 +156,7 @@ public class Actor {
             pjInfo.addProperty("hair_color_id", hairColorId);
             pjInfo.addProperty("clothes_color_id", clothesColorId);
 
-            APIRequest.shared.PUT("/characters/"+ accId +"/"+ charId, pjInfo);
+            APIRequest.shared.PUT(new APIRequestQueue("/characters/"+ accId +"/"+ charId, pjInfo));
 
         }
     }

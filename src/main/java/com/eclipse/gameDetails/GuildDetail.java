@@ -1,21 +1,16 @@
 package com.eclipse.gameDetails;
 
 import com.eclipse.apiRequest.APIRequest;
-import com.eclipse.sniffer.enums.PacketList;
+import com.eclipse.apiRequest.APIRequestQueue;
 import com.eclipse.sniffer.network.NetPacket;
-import com.eclipse.sniffer.network.PacketDecryption;
 import com.eclipse.sniffer.network.ROPacketDetail;
 import com.google.gson.JsonObject;
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
-import java.util.regex.Pattern;
-import java.util.zip.DataFormatException;
-import java.util.zip.Inflater;
 
 public class GuildDetail {
 
@@ -77,7 +72,7 @@ public class GuildDetail {
                 guildInfo.addProperty("character_name", charName);
                 guildInfo.addProperty("guild_name", guildName);
 
-                APIRequest.shared.PUT("/guilds/"+ accId, guildInfo);
+                APIRequest.shared.PUT(new APIRequestQueue("/guilds/"+ accId, guildInfo));
 
             }
 
@@ -111,7 +106,7 @@ public class GuildDetail {
                 guildEmblemInfo.addProperty("emblem_id", emblemId);
                 guildEmblemInfo.addProperty("emblem", emblemBase64);
 
-                APIRequest.shared.PUT("/guilds/"+ guildId +"/emblem/"+ emblemId, guildEmblemInfo);
+                APIRequest.shared.PUT(new APIRequestQueue("/guilds/"+ guildId +"/emblem/"+ emblemId, guildEmblemInfo));
 
             }
         }).start();
@@ -169,7 +164,7 @@ public class GuildDetail {
                 breakInfo.addProperty("guild_name", guild);
                 breakInfo.addProperty("timestamp", (new Date()).getTime());
 
-                //APIRequest.shared.PUT("/guilds/cast/"+ castId, breakInfo);
+                //APIRequest.shared.PUT(new APIRequestQueue("/guilds/cast/"+ castId, breakInfo));
 
             }
 

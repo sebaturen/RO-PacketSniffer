@@ -4,7 +4,6 @@ import com.eclipse.sniffer.enums.PacketList;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 public class ROPacketDetail {
 
@@ -44,7 +43,8 @@ public class ROPacketDetail {
                 "\"name\":" + (name == null ? "null" : name) + ", " +
                 "\"packetHeader\":" + (packetHeader == null ? "null" : "\"" + packetHeader + "\"") + ", " +
                 "\"timestamp\":" + (timestamp == null ? "null" : timestamp) + ", " +
-                //"\"content\":" + Arrays.toString(content) + ", " +
+                "\"content\":" + Arrays.toString(content) + ", " +
+                "\"content HEX\": "+ PacketDecryption.convertBytesToHex(content) +", "+
                 "\"port\":\"" + port + "\"" +
                 "}";
     }

@@ -12,11 +12,14 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class APIRequest {
 
     public static final String URL_API = "https://panel.delmal.cl/rest";
     public static APIRequest shared = new APIRequest();
+    private static List<APIRequestQueue> queue = new ArrayList<>();
 
     public APIRequest() {
 
@@ -45,26 +48,37 @@ public class APIRequest {
 
     }
 
-    public void PUT(String route, JsonObject object) {
+    public void PUT(APIRequestQueue request) {
 
         try {
-            URL url = new URL(URL_API+route);
+            URL url = new URL(URL_API+request.getRoute());
 
             HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
             httpCon.setDoOutput(true);
             httpCon.setRequestMethod("PUT");
             OutputStreamWriter out = new OutputStreamWriter(httpCon.getOutputStream());
-            out.write(object.toString());
+            out.write(request.getInfo().toString());
             out.close();
 
             httpCon.getInputStream();
+            int responseCode = httpCon.getResponseCode();
 
-            if (httpCon.getResponseCode() != 200 && httpCon.getResponseCode() != 304) {
+            if (responseCode != 200 && responseCode != 304) {
+                if (responseCode == 500) {
+                    queue.add(request);
+                }
                 System.out.println("Put info error! code!: "+ httpCon.getResponseCode());
+            } else {
+                if (queue.size() > 0) {
+                    System.out.println("API Queue Size: "+ queue.size());
+                    PUT(queue.remove(0));
+                }
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            queue.add(request);
+            System.out.println("API Connection exception "+ e);
+            System.out.println("Request: "+ request);
         }
 
     }

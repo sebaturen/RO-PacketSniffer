@@ -2,17 +2,13 @@ package com.eclipse.sniffer.network;
 
 import org.pcap4j.core.*;
 import org.pcap4j.packet.IpV4Packet;
-import org.pcap4j.packet.Packet;
 import org.pcap4j.packet.TcpPacket;
 
-import java.io.EOFException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeoutException;
 
 public class PacketInterceptor {
 

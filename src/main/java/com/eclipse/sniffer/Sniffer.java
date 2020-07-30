@@ -1,16 +1,13 @@
 package com.eclipse.sniffer;
 
-import com.eclipse.apiRequest.APIRequest;
 import com.eclipse.gameDetails.Actor;
 import com.eclipse.gameDetails.GeneralInfo;
 import com.eclipse.gameDetails.GuildDetail;
 import com.eclipse.guildWoeBreaker.WoEBreaker;
-import com.eclipse.sniffer.enums.PacketList;
 import com.eclipse.sniffer.network.NetPacket;
 import com.eclipse.sniffer.network.PacketDecryption;
 import com.eclipse.sniffer.network.ROPacketDetail;
 import com.eclipse.sniffer.network.PacketInterceptor;
-import com.google.gson.JsonObject;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -18,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Sniffer {
 
+    private static String apiKey;
     private static PacketInterceptor pInter;
     private static PacketDecryption pDecrypt = new PacketDecryption();
     private static boolean verbose = false;
@@ -25,11 +23,12 @@ public class Sniffer {
     public static void main(String... args) {
 
         pInter = new PacketInterceptor(args[0]);
+        apiKey = args[1];
         netPacketAddNotification();
         packetAddNotification();
 
-        if (args.length == 2) {
-            verbose = Boolean.parseBoolean(args[1]);
+        if (args.length == 3) {
+            verbose = Boolean.parseBoolean(args[2]);
         }
 
     }
@@ -87,4 +86,7 @@ public class Sniffer {
         }, 0, 100, TimeUnit.MILLISECONDS);
     }
 
+    public static String getApiKey() {
+        return apiKey;
+    }
 }
