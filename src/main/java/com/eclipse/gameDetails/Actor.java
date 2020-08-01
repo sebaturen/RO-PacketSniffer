@@ -3,6 +3,7 @@ package com.eclipse.gameDetails;
 import com.eclipse.apiRequest.APIRequest;
 import com.eclipse.apiRequest.APIRequestQueue;
 import com.eclipse.sniffer.enums.EnchantList;
+import com.eclipse.sniffer.enums.MonsterList;
 import com.eclipse.sniffer.enums.PacketList;
 import com.eclipse.sniffer.network.NetPacket;
 import com.eclipse.sniffer.network.PacketDecryption;
@@ -11,6 +12,7 @@ import com.eclipse.sniffer.network.ROPacketDetail;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+import com.eclipse.sniffer.tables.MonsterNames;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -42,7 +44,7 @@ public class Actor {
                     processPlayerShowInfo(inf, pd.getName());
                     break;
                 case ACTOR_TYPE_MONSTER:
-                    //processMonsterShowInfo(inf, pd.getName());
+                    processMonsterShowInfo(inf, pd.getName());
                     break;
             }
         }).start();
@@ -63,6 +65,7 @@ public class Actor {
     public static final int GUILD_ID_START = 45;
     public static final int EMBLEM_ID_START = 49;
     public static final int SEX_START = 58;
+    public static final int CORDS_POS_START = 59;
     public static final int LV_START = 65;
     public static final int NAME_START = 80;
 
@@ -81,7 +84,7 @@ public class Actor {
         byte[] bHairStyleId  = NetPacket.reverseContent(Arrays.copyOfRange(inf, HAIR_STYLE_START, HAIR_STYLE_START+2));
         byte[] bWeaponId     = NetPacket.reverseContent(Arrays.copyOfRange(inf, WEAPON_START, WEAPON_START+4));
         byte[] bShieldId     = NetPacket.reverseContent(Arrays.copyOfRange(inf, SHIELD_START, SHIELD_START+4));
-        byte[] bLowHeadId      = NetPacket.reverseContent(Arrays.copyOfRange(inf, LOW_HEAD_START, LOW_HEAD_START+2));
+        byte[] bLowHeadId    = NetPacket.reverseContent(Arrays.copyOfRange(inf, LOW_HEAD_START, LOW_HEAD_START+2));
         int topPost = TOP_HEAD_START;
         int midPost = MID_HEAD_START;
         int hairColor = HAIR_COLOR_START;
@@ -159,6 +162,23 @@ public class Actor {
             APIRequest.shared.PUT(new APIRequestQueue("/characters/"+ accId +"/"+ charId, pjInfo));
 
         }
+    }
+
+    private void processMonsterShowInfo(byte[] inf, PacketList packetType) {
+        byte[] bMonterId = NetPacket.reverseContent(Arrays.copyOfRange(inf, JOB_ID_START, JOB_ID_START+2));
+        short monsterId = (ByteBuffer.wrap(bMonterId)).getShort();
+        int cordsPos = CORDS_POS_START;
+        if (packetType == PacketList.ACTOR_MOVE) {
+            cordsPos += 4;
+        } else if (packetType == PacketList.ACTOR_CONNECTED) {
+            cordsPos -= 1;
+        }
+        byte[] bCoords = Arrays.copyOfRange(inf, cordsPos, cordsPos+4);
+        int bCoordsInt = (ByteBuffer.wrap(bCoords)).getInt() >> 8;
+        int x = bCoordsInt >> 14;
+        int y = (bCoordsInt >> 4) & 0x3FF;
+        System.out.println("Monster "+ MonsterNames.getMonsterName(MonsterList.valueOf(monsterId)) +" [#"+ monsterId +"] ("+ x +","+ y +")");
+
     }
 
     private static final int START_EQUIP = 43;

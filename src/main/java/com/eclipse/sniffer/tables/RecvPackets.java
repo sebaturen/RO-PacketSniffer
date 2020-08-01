@@ -9,7 +9,6 @@ public class RecvPackets {
 
     static {
         Map<String, Integer> rPackets = new HashMap<>();
-
         rPackets.put("0437", 7);
         rPackets.put("0438", 10);
         rPackets.put("035F", 5);
