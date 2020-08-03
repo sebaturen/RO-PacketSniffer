@@ -222,6 +222,10 @@ public enum PacketList {
     VENDING_SHOP_SKILL("012D"),
     VENDING_SHOP_STATUS("0A28"),
     // ??
+    //changeToInGameState (0077)
+    JOB_EQUIPMENT_HAIR_CHANGE("00C3"),
+    LOGIN_ERROR_GAME_LOGIN_SERVER("006C"),
+    MARRIAGE_PARTNER_NAME("01E6"),
     HOTKEYS("0A00"),
     HOTKEYS_2("07D9"),
     TOP_10("097D"),

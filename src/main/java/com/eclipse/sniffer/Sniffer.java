@@ -9,6 +9,7 @@ import com.eclipse.sniffer.network.PacketDecryption;
 import com.eclipse.sniffer.network.ROPacketDetail;
 import com.eclipse.sniffer.network.PacketInterceptor;
 
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -17,7 +18,7 @@ public class Sniffer {
 
     private static String apiKey;
     private static PacketInterceptor pInter;
-    private static PacketDecryption pDecrypt = new PacketDecryption();
+    private static final PacketDecryption pDecrypt = new PacketDecryption();
     private static boolean verbose = false;
 
     public static void main(String... args) {
@@ -57,7 +58,7 @@ public class Sniffer {
             ROPacketDetail pd;
             while( (pd = PacketDecryption.getPacket()) != null) {
                 if (verbose) {
-                    //System.out.println(pd);
+                    System.out.println(pd);
                 }
                 switch (pd.getName()) {
                     case LOCAL_BROADCAST:
@@ -73,7 +74,7 @@ public class Sniffer {
                     case GUILD_EMBLEM:
                         GuildDetail.process(pd);
                         break;
-                    case SYSTEM_CHAT:
+                    case SYSTEM_CHAT: case MAP_CHANGE:
                         GeneralInfo.process(pd);
                         break;
                     case UNKNOWN:

@@ -11,6 +11,7 @@ import com.eclipse.sniffer.network.ROPacketDetail;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.List;
 
 import com.eclipse.sniffer.tables.MonsterNames;
 import com.google.gson.JsonArray;
@@ -44,7 +45,7 @@ public class Actor {
                     processPlayerShowInfo(inf, pd.getName());
                     break;
                 case ACTOR_TYPE_MONSTER:
-                    processMonsterShowInfo(inf, pd.getName());
+                    processMonsterShowInfo(inf, pd.getName(), pd.getPort());
                     break;
             }
         }).start();
@@ -164,7 +165,9 @@ public class Actor {
         }
     }
 
-    private void processMonsterShowInfo(byte[] inf, PacketList packetType) {
+    private void processMonsterShowInfo(byte[] inf, PacketList packetType, int port) {
+        byte[] bId = NetPacket.reverseContent(Arrays.copyOfRange(inf, ID_START, ID_START+4));
+        int monsMapId = (ByteBuffer.wrap(bId)).getInt();
         byte[] bMonterId = NetPacket.reverseContent(Arrays.copyOfRange(inf, JOB_ID_START, JOB_ID_START+2));
         short monsterId = (ByteBuffer.wrap(bMonterId)).getShort();
         int cordsPos = CORDS_POS_START;
@@ -173,11 +176,79 @@ public class Actor {
         } else if (packetType == PacketList.ACTOR_CONNECTED) {
             cordsPos -= 1;
         }
+        MonsterList monster = MonsterList.valueOf(monsterId);
         byte[] bCoords = Arrays.copyOfRange(inf, cordsPos, cordsPos+4);
         int bCoordsInt = (ByteBuffer.wrap(bCoords)).getInt() >> 8;
         int x = bCoordsInt >> 14;
         int y = (bCoordsInt >> 4) & 0x3FF;
-        System.out.println("Monster "+ MonsterNames.getMonsterName(MonsterList.valueOf(monsterId)) +" [#"+ monsterId +"] ("+ x +","+ y +")");
+
+        // Mini boss
+        List<MonsterList> searchMobs = Arrays.asList(
+                // Miniboss
+                MonsterList.ANGELING,
+                MonsterList.DEVILING,
+                MonsterList.GHOSTRING,
+                MonsterList.MAYA_PUPLE,
+                MonsterList.G_RANDGRIS,
+                // MVP
+                MonsterList.AMON_RA,
+                MonsterList.ATROCE,
+                MonsterList.BAPHOMET,
+                MonsterList.BEELZEBUB,
+                MonsterList.BOITATA,
+                MonsterList.DARK_LORD,
+                MonsterList.DETALE,
+                MonsterList.DOPPELGANGER,
+                MonsterList.DRACULA,
+                MonsterList.DRAKE,
+                MonsterList.EDDGA,
+                MonsterList.B_YGNIZEM,
+                MonsterList.GLOOMUNDERNIGHT,
+                MonsterList.GARM,
+                MonsterList.IFRIT,
+                MonsterList.KIEL,
+                MonsterList.KRABEN,
+                MonsterList.LADY_TANEE,
+                MonsterList.LEAK,
+                MonsterList.LORD_OF_DEATH,
+                MonsterList.RANDGRIS,
+                MonsterList.MAYA,
+                MonsterList.MISTRESS,
+                MonsterList.MOONLIGHT,
+                MonsterList.ORK_HERO,
+                MonsterList.ORC_LORD,
+                MonsterList.OSIRIS,
+                MonsterList.MOROCC_,
+                MonsterList.PHARAOH,
+                MonsterList.PHREEONI,
+                MonsterList.QUEEN_SCARABA,
+                MonsterList.RSX_0806,
+                MonsterList.INCANTATION_SAMURAI,
+                MonsterList.KNIGHT_OF_WINDSTORM,
+                MonsterList.TAO_GUNKA,
+                MonsterList.TURTLE_GENERAL,
+                MonsterList.BACSOJIN_,
+                MonsterList.GOLDEN_BUG,
+                MonsterList.FALLINGBISHOP,
+                MonsterList.THANATOS,
+                MonsterList.KTULLANUX
+        );
+        if (searchMobs.contains(monster)) {
+
+            JsonObject mobLocationInfo = new JsonObject();
+            mobLocationInfo.addProperty("id", monsMapId);
+            mobLocationInfo.addProperty("monster_id", monsterId);
+            mobLocationInfo.addProperty("monster_name", MonsterNames.getMonsterName(monster));
+            String mapName = GeneralInfo.getMapName(port);
+            if (mapName != null) {
+                mobLocationInfo.addProperty("map_name", GeneralInfo.getMapName(port));
+            }
+            mobLocationInfo.addProperty("x", x);
+            mobLocationInfo.addProperty("y", y);
+
+            //System.out.println(mobLocationInfo);
+            APIRequest.shared.PUT(new APIRequestQueue("/monsters/location/"+ monsterId, mobLocationInfo));
+        }
 
     }
 

@@ -164,7 +164,7 @@ public class GuildDetail {
                 breakInfo.addProperty("guild_name", guild);
                 breakInfo.addProperty("timestamp", (new Date()).getTime());
 
-                //APIRequest.shared.PUT(new APIRequestQueue("/guilds/cast/"+ castId, breakInfo));
+                APIRequest.shared.PUT(new APIRequestQueue("/woe/break/cast/"+ castId, breakInfo));
 
             }
 

@@ -98,7 +98,8 @@ public class PacketDecryption {
         } catch (IllegalArgumentException e) {
             System.out.println("Error "+ e);
             System.out.println("Packet: "+ Arrays.toString(netPacket.getContent()));
-            System.exit(-1);
+            e.printStackTrace();
+            //System.exit(-1);
         }
 
         return packetDetails;
