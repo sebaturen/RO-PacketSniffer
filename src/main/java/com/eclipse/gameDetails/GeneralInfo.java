@@ -1,5 +1,6 @@
 package com.eclipse.gameDetails;
 
+import com.eclipse.sniffer.network.PacketDecryption;
 import com.eclipse.sniffer.network.ROPacketDetail;
 
 import java.sql.Struct;
@@ -22,8 +23,19 @@ public class GeneralInfo {
                 break;
             case MAP_CHANGE:
                 gd.processMapChange(pd);
+                break;
         }
 
+    }
+
+    public static boolean isProbablyArabic(String s) {
+        for (int i = 0; i < s.length();) {
+            int c = s.codePointAt(i);
+            if (c >= 0x0600 && c <= 0x06E0)
+                return false;
+            i += Character.charCount(c);
+        }
+        return true;
     }
 
     /**

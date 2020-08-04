@@ -11,6 +11,7 @@ import com.eclipse.sniffer.network.ROPacketDetail;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import com.eclipse.sniffer.tables.MonsterNames;
@@ -75,7 +76,7 @@ public class Actor {
      * '09FF' => ['actor_exists',    'v C a4 a4 v3 V v2 V2 v7 a4 a2 v V C2 a3 C3 v2 V2 C v Z*',     [qw(len object_type ID charID walk_speed opt1 opt2 option type hair_style weapon shield lowhead         tophead midhead hair_color clothes_color head_dir costume guildID emblemID manner opt3 stance sex coords xSize ySize state lv font maxHP HP isBoss opt4 name)]],
      * '09FE' => ['actor_connected', 'v C a4 a4 v3 V v2 V2 v7 a4 a2 v V C2 a3 C2 v2 V2 C v Z*',     [qw(len object_type ID charID walk_speed opt1 opt2 option type hair_style weapon shield lowhead         tophead midhead hair_color clothes_color head_dir costume guildID emblemID manner opt3 stance sex coords xSize ySize       lv font maxHP HP isBoss opt4 name)]],
      * '09FD' => ['actor_moved',     'v C a4 a4 v3 V v2 V2 v V v6 a4 a2 v V C2 a6 C2 v2 V2 C v Z*', [qw(len object_type ID charID walk_speed opt1 opt2 option type hair_style weapon shield lowhead tick(4) tophead midhead hair_color clothes_color head_dir costume guildID emblemID manner opt3 stance sex coords xSize ySize       lv font maxHP HP isBoss opt4 name)]],
-     * @param pd
+     * @param
      */
     private void processPlayerShowInfo(byte[] inf, PacketList packetType) {
         // Struct info
@@ -137,8 +138,14 @@ public class Actor {
         short lvl         = (ByteBuffer.wrap(bLv)).getShort();
         short sex         = bSex;
 
-        // Check posible sniffer packet error
-        if (name.length() > 0 && emblemId >= 0 && guildId >= 0 && lvl >= 1 && lvl <= 99) {
+        // Check possible sniffer packet error
+        if (name.length() > 0
+                && GeneralInfo.isProbablyArabic(name)
+                && emblemId >= 0
+                && guildId >= 0
+                && lvl >= 1
+                && lvl <= 99
+                && (sex == 0 || sex == 1)) {
 
             JsonObject pjInfo = new JsonObject();
             pjInfo.addProperty("account_id", accId);
@@ -239,6 +246,7 @@ public class Actor {
             mobLocationInfo.addProperty("id", monsMapId);
             mobLocationInfo.addProperty("monster_id", monsterId);
             mobLocationInfo.addProperty("monster_name", MonsterNames.getMonsterName(monster));
+            mobLocationInfo.addProperty("timestamp", new Date().getTime());
             String mapName = GeneralInfo.getMapName(port);
             if (mapName != null) {
                 mobLocationInfo.addProperty("map_name", GeneralInfo.getMapName(port));
@@ -361,4 +369,5 @@ public class Actor {
 
         }).start();
     }
+
 }

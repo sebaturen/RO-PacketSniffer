@@ -71,7 +71,11 @@ public class APIRequest {
             } else {
                 if (queue.size() > 0) {
                     System.out.println("API Queue Size: "+ queue.size());
-                    PUT(queue.remove(0));
+                    try {
+                        PUT(queue.remove(0));
+                    } catch (IndexOutOfBoundsException e) {
+                        // The queue not have element, other thread use
+                    }
                 }
             }
 

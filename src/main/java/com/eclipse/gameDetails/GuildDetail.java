@@ -65,7 +65,8 @@ public class GuildDetail {
             String charName = new String(bName);
             String guildName = new String(bGuildName);
 
-            if (guildName.length() > 0) {
+            if (guildName.length() > 0
+                && GeneralInfo.isProbablyArabic(guildName)) {
 
                 JsonObject guildInfo = new JsonObject();
                 guildInfo.addProperty("account_id", accId);

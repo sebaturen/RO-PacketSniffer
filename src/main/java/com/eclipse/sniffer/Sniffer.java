@@ -74,7 +74,7 @@ public class Sniffer {
                     case GUILD_EMBLEM:
                         GuildDetail.process(pd);
                         break;
-                    case SYSTEM_CHAT: case MAP_CHANGE:
+                    case SYSTEM_CHAT: case MAP_CHANGE: case MAP_LOADED: case MAP_LOADED_2: case MAP_CHANGED:
                         GeneralInfo.process(pd);
                         break;
                     case UNKNOWN:
