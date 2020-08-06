@@ -1,21 +1,19 @@
-package com.eclipse.gameDetails;
+package com.eclipse.gameDetailsDecrypt;
 
-import com.eclipse.sniffer.network.PacketDecryption;
 import com.eclipse.sniffer.network.ROPacketDetail;
 
-import java.sql.Struct;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class GeneralInfo {
+public class GeneralInfoDecrypt {
 
-    private static Map<Integer, String> currentMap = new HashMap<>();
+    private static final Map<Integer, String> currentMap = new HashMap<>();
 
     public static void process(ROPacketDetail pd) {
-        GeneralInfo gd = new GeneralInfo();
+        GeneralInfoDecrypt gd = new GeneralInfoDecrypt();
 
         switch (pd.getName()) {
             case SYSTEM_CHAT:
@@ -29,11 +27,11 @@ public class GeneralInfo {
     }
 
     public static boolean isProbablyArabic(String s) {
-        for (int i = 0; i < s.length();) {
-            int c = s.codePointAt(i);
-            if (c >= 0x0600 && c <= 0x06E0)
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c < 32 || c > 126) {
                 return false;
-            i += Character.charCount(c);
+            }
         }
         return true;
     }
@@ -46,9 +44,9 @@ public class GeneralInfo {
         new Thread(() -> {
             String msg = new String(pd.getContent());
 
-            Pattern pattern = Pattern.compile(GuildDetail.woeBreakerPattern);
+            Pattern pattern = Pattern.compile(GuildDetailDecrypt.woeBreakerPattern);
             if ((pattern.matcher(msg)).matches()) {
-                GuildDetail.process(pd);
+                GuildDetailDecrypt.process(pd);
             }
 
         }).start();

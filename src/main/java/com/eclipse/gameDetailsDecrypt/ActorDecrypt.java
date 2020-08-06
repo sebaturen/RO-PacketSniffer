@@ -1,4 +1,4 @@
-package com.eclipse.gameDetails;
+package com.eclipse.gameDetailsDecrypt;
 
 import com.eclipse.apiRequest.APIRequest;
 import com.eclipse.apiRequest.APIRequestQueue;
@@ -10,25 +10,33 @@ import com.eclipse.sniffer.network.PacketDecryption;
 import com.eclipse.sniffer.network.ROPacketDetail;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
+import com.eclipse.sniffer.tables.ItemNames;
 import com.eclipse.sniffer.tables.MonsterNames;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-public class Actor {
+public class ActorDecrypt {
 
     public static void process(ROPacketDetail pd) {
-        Actor cd = new Actor();
+        ActorDecrypt cd = new ActorDecrypt();
 
-        if (pd.getName() == PacketList.SHOW_EQUIP) {
-            cd.processEquip(pd);
-        } else if (pd.getName() == PacketList.ACTOR_INFO_NAME_PARTY_GUILD_TITLE) {
-            GuildDetail.process(pd);
-        } else {
-            cd.processActor(pd);
+        switch (pd.getName()) {
+            case SHOW_EQUIP:
+                cd.processEquip(pd);
+                break;
+            case ACTOR_INFO_NAME_PARTY_GUILD_TITLE:
+                GuildDetailDecrypt.process(pd);
+                break;
+            case ITEM_LIST_START:
+            case ITEM_LIST_STACKABLE:
+            case ITEM_LIST_NON_STACKABLE:
+            case ITEM_LIST_END:
+                cd.processItemList(pd);
+            default:
+                cd.processActor(pd);
+                break;
         }
 
     }
@@ -140,7 +148,7 @@ public class Actor {
 
         // Check possible sniffer packet error
         if (name.length() > 0
-                && GeneralInfo.isProbablyArabic(name)
+                && GeneralInfoDecrypt.isProbablyArabic(name)
                 && emblemId >= 0
                 && guildId >= 0
                 && lvl >= 1
@@ -169,6 +177,12 @@ public class Actor {
 
             APIRequest.shared.PUT(new APIRequestQueue("/characters/"+ accId +"/"+ charId, pjInfo));
 
+        }
+
+        if (!GeneralInfoDecrypt.isProbablyArabic(name)) {
+            System.out.println("Name not arabic!");
+            System.out.println(Arrays.toString(inf));
+            System.out.println(PacketDecryption.convertBytesToHex(inf));
         }
     }
 
@@ -240,16 +254,16 @@ public class Actor {
                 MonsterList.THANATOS,
                 MonsterList.KTULLANUX
         );
-        if (searchMobs.contains(monster)) {
+        if (searchMobs.contains(monster) && x > 0 && y > 0) {
 
             JsonObject mobLocationInfo = new JsonObject();
             mobLocationInfo.addProperty("id", monsMapId);
             mobLocationInfo.addProperty("monster_id", monsterId);
             mobLocationInfo.addProperty("monster_name", MonsterNames.getMonsterName(monster));
             mobLocationInfo.addProperty("timestamp", new Date().getTime());
-            String mapName = GeneralInfo.getMapName(port);
+            String mapName = GeneralInfoDecrypt.getMapName(port);
             if (mapName != null) {
-                mobLocationInfo.addProperty("map_name", GeneralInfo.getMapName(port));
+                mobLocationInfo.addProperty("map_name", GeneralInfoDecrypt.getMapName(port));
             }
             mobLocationInfo.addProperty("x", x);
             mobLocationInfo.addProperty("y", y);
@@ -322,45 +336,8 @@ public class Actor {
                 // Divide equip information
                 JsonArray equips = new JsonArray();
                 for(int i = 0; i < equipInf.length; i += 67) {
-                    byte[] bEquip   = Arrays.copyOfRange(equipInf,i,i+EQUIP_INFO_SIZE);
-                    byte[] bItemId  = NetPacket.reverseContent(Arrays.copyOfRange(bEquip, ITEM_ID_START, ITEM_ID_START+4));
-                    byte[] bPos     = Arrays.copyOfRange(bEquip, POSITION_START, POSITION_START+9);
-                    byte bRefine    = bEquip[REFINE_START];
-                    // CARDS
-                    JsonArray cards = new JsonArray();
-                    for (int j = CARD_START; j < (CARD_START+16); j+=4) {
-                        byte[] bCard   = NetPacket.reverseContent(Arrays.copyOfRange(bEquip, j, j+4));
-                        int card   = (ByteBuffer.wrap(bCard)).getInt();
-                        if (card != 0) cards.add(card);
-                    }
-                    JsonArray enchants = new JsonArray();
-                    for (int j = ENCHANT_START; j < bEquip.length-1; j+=3) {
-                        byte[] bEnch   = NetPacket.reverseContent(Arrays.copyOfRange(bEquip, j, j+2));
-                        j +=2 ;
-                        byte[] bEnchv  = NetPacket.reverseContent(Arrays.copyOfRange(bEquip, j, j+2));
-                        short ench   = (ByteBuffer.wrap(bEnch)).getShort();
-                        short enchv  = (ByteBuffer.wrap(bEnchv)).getShort();
-                        if (ench != 0) {
-                            JsonObject enchInf = new JsonObject();
-                            enchInf.addProperty("type", EnchantList.valueOf(ench).toString());
-                            enchInf.addProperty("val", enchv);
-                            enchants.add(enchInf);
-                        }
-                    }
-
-                    //short pos   = (ByteBuffer.wrap(bPos)).getShort();
-                    int itemId  = (ByteBuffer.wrap(bItemId)).getInt();
-
-                    JsonObject equip = new JsonObject();
-                    //equip.addProperty("position", pos);
-                    equip.addProperty("item_id", itemId);
-                    equip.addProperty("refine", bRefine);
-                    equip.addProperty("pos", PacketDecryption.convertBytesToHex(bPos));
-                    if (cards.size() > 0) equip.add("cards", cards);
-                    if (enchants.size() > 0) equip.add("enchants", enchants);
-
-
-                    equips.add(equip);
+                    byte[] bEquip   = Arrays.copyOfRange(inf,i,i+EQUIP_INFO_SIZE);
+                    equips.add(processEquipItem(bEquip));
                 }
                 characterInfo.add("equip", equips);
 
@@ -368,6 +345,102 @@ public class Actor {
             }
 
         }).start();
+    }
+
+    private JsonObject processEquipItem(byte[] inf) {
+
+        byte[] bItemId  = NetPacket.reverseContent(Arrays.copyOfRange(inf, ITEM_ID_START, ITEM_ID_START+4));
+        byte[] bPos     = Arrays.copyOfRange(inf, POSITION_START, POSITION_START+9);
+        byte bRefine    = inf[REFINE_START];
+        // CARDS
+        JsonArray cards = new JsonArray();
+        for (int j = CARD_START; j < (CARD_START+16); j+=4) {
+            byte[] bCard   = NetPacket.reverseContent(Arrays.copyOfRange(inf, j, j+4));
+            int card   = (ByteBuffer.wrap(bCard)).getInt();
+            if (card != 0) cards.add(card);
+        }
+        JsonArray enchants = new JsonArray();
+        for (int j = ENCHANT_START; j < inf.length-1; j+=3) {
+            byte[] bEnch   = NetPacket.reverseContent(Arrays.copyOfRange(inf, j, j+2));
+            j +=2 ;
+            byte[] bEnchv  = NetPacket.reverseContent(Arrays.copyOfRange(inf, j, j+2));
+            short ench   = (ByteBuffer.wrap(bEnch)).getShort();
+            short enchv  = (ByteBuffer.wrap(bEnchv)).getShort();
+            if (ench != 0) {
+                JsonObject enchInf = new JsonObject();
+                enchInf.addProperty("type", EnchantList.valueOf(ench).toString());
+                enchInf.addProperty("val", enchv);
+                enchants.add(enchInf);
+            }
+        }
+
+        //short pos   = (ByteBuffer.wrap(bPos)).getShort();
+        int itemId  = (ByteBuffer.wrap(bItemId)).getInt();
+
+        JsonObject equip = new JsonObject();
+        //equip.addProperty("position", pos);
+        equip.addProperty("item_id", itemId);
+        equip.addProperty("refine", bRefine);
+        equip.addProperty("pos", PacketDecryption.convertBytesToHex(bPos));
+        if (cards.size() > 0) equip.add("cards", cards);
+        if (enchants.size() > 0) equip.add("enchants", enchants);
+
+        return equip;
+    }
+
+    private static final int ITEM_LIST_ID_START = 2;
+    private static final int ITEM_LIST_CANT_START = 7;
+
+    /**
+     * STACKABLE
+     *          ID          CANT
+     * 02|0700|C9020000|03|0100|00000000000000000000000000000000000000000000000001
+     *   |0800|D5020000|03|0100|00000000000000000000000000000000000000000000000001
+     * 02|0C00|E7030000|03|0200|00000000000000000000000000000000000000000000000001
+     * 02|1100|DF380000|02|0A00|00000000000000000000000000000000000000000000000001
+     *
+     * NON STACKABLE
+     * 3A00|6E070000|05020000000000000000000000000000000000000000000000000000000000000D0000050001000018000700002B000500000000000000000000000001
+     * 3B00|4B050000|092200000000000000000000000000000000000000000000000000000000000007000003000100000F0001000025000600000000000000000000000001
+     * 3C00|83040000|09220000000000000000000000000000000000000000000000000000000000000300000400030000020014000025000A00000000000000000000000001
+     * @param pd
+     */
+    private void processItemList(ROPacketDetail pd) {
+
+        new Thread(() -> {
+            switch (pd.getName()) {
+                case ITEM_LIST_STACKABLE:
+                    byte[] itemsStack = new byte[pd.getContent().length-1];
+                    itemsStack = Arrays.copyOfRange(pd.getContent(), 1, itemsStack.length+1);
+                    for(int i = 0; i < itemsStack.length; i += 34) {
+                        byte[] item = Arrays.copyOfRange(itemsStack, i, i+34);
+
+                        // Decrypt info
+                        byte[] bId      = NetPacket.reverseContent(Arrays.copyOfRange(item, ITEM_LIST_ID_START, ITEM_LIST_ID_START+4));
+                        byte[] bCant    = NetPacket.reverseContent(Arrays.copyOfRange(item, ITEM_LIST_CANT_START, ITEM_LIST_CANT_START+2));
+
+                        int id = (ByteBuffer.wrap(bId)).getInt();
+                        short cant = (ByteBuffer.wrap(bCant)).getShort();
+
+                        System.out.println(cant +"\t"+ ItemNames.getItemId(id));
+
+                    }
+                    break;
+                case ITEM_LIST_NON_STACKABLE:
+                    byte[] itemsNonStack = new byte[pd.getContent().length-1];
+                    itemsNonStack = Arrays.copyOfRange(pd.getContent(), 1, itemsNonStack.length+1);
+                    for(int i = 0; i < itemsNonStack.length; i += 67) {
+                        byte[] item = Arrays.copyOfRange(itemsNonStack, i, i+67);
+
+                        // Decrypt info
+                        JsonObject equipItem = processEquipItem(item);
+                        System.out.println("1\t"+ ItemNames.getItemId(equipItem.get("item_id").getAsInt()) +"\t"+ equipItem.get("cards") +"\t"+ equipItem.get("enchants"));
+
+                    }
+                    break;
+            }
+        }).start();
+
     }
 
 }

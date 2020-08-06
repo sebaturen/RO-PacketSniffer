@@ -7,9 +7,11 @@ import java.util.*;
 
 public class PacketDecryption {
 
+    // Network packet, forum, web or update
+    private static final List<String> packetSkip = Arrays.asList("5448", "3234", "7A67");
     private static final List<ROPacketDetail> packList = new ArrayList<>();
-    private Map<Integer, byte[]> delayPacket = new HashMap<>();
-    private List<byte[]> lastPackets = new ArrayList<>();
+    private final Map<Integer, byte[]> delayPacket = new HashMap<>();
+    private final List<byte[]> lastPackets = new ArrayList<>();
 
     public PacketDecryption() {
 
@@ -61,6 +63,9 @@ public class PacketDecryption {
                     break;
                 }
                 String pList = convertBytesToHex(new byte[] {sepContent[1], sepContent[0]});
+                if (packetSkip.contains(pList)) {
+                    continue;
+                }
                 int pSize = RecvPackets.getPacketSize(pList);
                 if (pSize != 0) {
                     int from = 2;

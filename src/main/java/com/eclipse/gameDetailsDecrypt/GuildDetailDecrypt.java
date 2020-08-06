@@ -1,4 +1,4 @@
-package com.eclipse.gameDetails;
+package com.eclipse.gameDetailsDecrypt;
 
 import com.eclipse.apiRequest.APIRequest;
 import com.eclipse.apiRequest.APIRequestQueue;
@@ -6,16 +6,15 @@ import com.eclipse.sniffer.network.NetPacket;
 import com.eclipse.sniffer.network.ROPacketDetail;
 import com.google.gson.JsonObject;
 
-import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 
-public class GuildDetail {
+public class GuildDetailDecrypt {
 
     public static void process(ROPacketDetail pd) {
-        GuildDetail gd = new GuildDetail();
+        GuildDetailDecrypt gd = new GuildDetailDecrypt();
 
         switch (pd.getName()) {
             case ACTOR_INFO_NAME_PARTY_GUILD_TITLE:
@@ -66,7 +65,7 @@ public class GuildDetail {
             String guildName = new String(bGuildName);
 
             if (guildName.length() > 0
-                && GeneralInfo.isProbablyArabic(guildName)) {
+                && GeneralInfoDecrypt.isProbablyArabic(guildName)) {
 
                 JsonObject guildInfo = new JsonObject();
                 guildInfo.addProperty("account_id", accId);
