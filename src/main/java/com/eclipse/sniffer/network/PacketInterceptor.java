@@ -1,9 +1,12 @@
 package com.eclipse.sniffer.network;
 
+import com.eclipse.sniffer.Sniffer;
 import org.pcap4j.core.*;
 import org.pcap4j.packet.IpV4Packet;
 import org.pcap4j.packet.TcpPacket;
 
+import java.io.IOError;
+import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -12,13 +15,15 @@ import java.util.List;
 
 public class PacketInterceptor {
 
-    public List<NetPacket> packetList = new ArrayList<>();
+    public List<NetPacket>  packetList = new ArrayList<>();
+    private String ip;
     public static final int SNAP_LEN = 65536;
     public static final int TIMEOUT = 10;
     public static final int BUFFER_SIZE = 1024 * 1024;// * 1024;
 
     public PacketInterceptor(String ip) {
-        prepareHandle(ip);
+        this.ip = ip;
+        prepareHandle();
     }
 
     /**
@@ -30,6 +35,12 @@ public class PacketInterceptor {
             IpV4Packet ipV4Packet = packet.get(IpV4Packet.class);
             Inet4Address srcAddr = ipV4Packet.getHeader().getSrcAddr();
             if (srcAddr.getHostAddress().matches("128.241.[0-9]*.[0-9]*")) {
+
+                if (packetList.size() > 10) {
+                    //Sniffer.restartPacketDecrypt();
+                    System.out.println("SERVICE IS DOWN! RESTART NOW IT TO WORK AGAIN ["+ packetList.size() +"]");
+                }
+                //System.out.print("RO Packet ["+ packetList.size() +"]");
 
                 TcpPacket.TcpHeader tcpPacket = packet.get(TcpPacket.class).getHeader();
                 byte[] evPacket = packet.get(TcpPacket.class).getPayload().getRawData();
@@ -44,12 +55,11 @@ public class PacketInterceptor {
      * Prepare NIC handle
      * @return
      */
-    private void prepareHandle(String ip) {
+    private void prepareHandle() {
 
         try {
 
             InetAddress addr = InetAddress.getByName(ip);
-            //InetAddress addr = InetAddress.getByName("10.0.0.128");
             PcapNetworkInterface nif = Pcaps.getDevByAddress(addr);
 
             PcapHandle.Builder phb = new PcapHandle.Builder(nif.getName())
@@ -63,8 +73,10 @@ public class PacketInterceptor {
             new Thread(() -> {
                 try (PcapHandle handle = phb.build()) {
                     handle.loop(-1, listener, Runnable::run);
-                } catch (InterruptedException | NotOpenException | PcapNativeException e) {
+                } catch (InterruptedException | NotOpenException | PcapNativeException | IOError e) {
                     e.printStackTrace();
+                    // start again!
+                    prepareHandle();
                 }
             }).start();
 

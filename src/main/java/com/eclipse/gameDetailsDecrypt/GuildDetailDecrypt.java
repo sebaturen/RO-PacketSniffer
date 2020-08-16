@@ -72,7 +72,7 @@ public class GuildDetailDecrypt {
                 guildInfo.addProperty("character_name", charName);
                 guildInfo.addProperty("guild_name", guildName);
 
-                APIRequest.shared.PUT(new APIRequestQueue("/guilds/"+ accId, guildInfo));
+                APIRequest.shared.PUT(new APIRequestQueue("/guilds/"+ accId, guildInfo, "PUT"));
 
             }
 
@@ -106,7 +106,7 @@ public class GuildDetailDecrypt {
                 guildEmblemInfo.addProperty("emblem_id", emblemId);
                 guildEmblemInfo.addProperty("emblem", emblemBase64);
 
-                APIRequest.shared.PUT(new APIRequestQueue("/guilds/"+ guildId +"/emblem/"+ emblemId, guildEmblemInfo));
+                APIRequest.shared.PUT(new APIRequestQueue("/guilds/"+ guildId +"/emblem/"+ emblemId, guildEmblemInfo, "PUT"));
 
             }
         }).start();
@@ -164,7 +164,7 @@ public class GuildDetailDecrypt {
                 breakInfo.addProperty("guild_name", guild);
                 breakInfo.addProperty("timestamp", (new Date()).getTime());
 
-                APIRequest.shared.PUT(new APIRequestQueue("/woe/break/cast/"+ castId, breakInfo));
+                APIRequest.shared.PUT(new APIRequestQueue("/woe/break/cast/"+ castId, breakInfo, "PUT"));
 
             }
 

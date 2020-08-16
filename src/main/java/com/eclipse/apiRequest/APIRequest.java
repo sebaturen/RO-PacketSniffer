@@ -48,14 +48,22 @@ public class APIRequest {
 
     }
 
+    public void POST(APIRequestQueue request) {
+        request(request.getType(), request);
+    }
+
     public void PUT(APIRequestQueue request) {
+        request(request.getType(), request);
+    }
+
+    private void request(String type, APIRequestQueue request) {
 
         try {
             URL url = new URL(URL_API+request.getRoute());
 
             HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
             httpCon.setDoOutput(true);
-            httpCon.setRequestMethod("PUT");
+            httpCon.setRequestMethod(type);
             OutputStreamWriter out = new OutputStreamWriter(httpCon.getOutputStream());
             out.write(request.getInfo().toString());
             out.close();
@@ -63,7 +71,7 @@ public class APIRequest {
             httpCon.getInputStream();
             int responseCode = httpCon.getResponseCode();
 
-            if (responseCode != 200 && responseCode != 304) {
+            if (responseCode != 200 && responseCode != 304 && responseCode != 403) {
                 if (responseCode == 500) {
                     queue.add(request);
                 }
@@ -72,7 +80,8 @@ public class APIRequest {
                 if (queue.size() > 0) {
                     System.out.println("API Queue Size: "+ queue.size());
                     try {
-                        PUT(queue.remove(0));
+                        APIRequestQueue q = queue.remove(0);
+                        request(q.getType(), q);
                     } catch (IndexOutOfBoundsException e) {
                         // The queue not have element, other thread use
                     }
@@ -84,6 +93,5 @@ public class APIRequest {
             System.out.println("API Connection exception "+ e);
             System.out.println("Request: "+ request);
         }
-
     }
 }

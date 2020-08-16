@@ -135,7 +135,11 @@ public class PacketDecryption {
     public static ROPacketDetail getPacket() {
         //System.out.println(packList);
         if (packList.size() > 0) {
-            return packList.remove(0);
+            try {
+                return packList.remove(0);
+            } catch (UnsupportedOperationException | IndexOutOfBoundsException e) {
+                System.out.println("Failed to remove RO Packet "+ e);
+            }
         }
         return null;
     }

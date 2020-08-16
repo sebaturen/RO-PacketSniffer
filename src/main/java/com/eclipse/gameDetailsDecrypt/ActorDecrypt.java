@@ -2,6 +2,7 @@ package com.eclipse.gameDetailsDecrypt;
 
 import com.eclipse.apiRequest.APIRequest;
 import com.eclipse.apiRequest.APIRequestQueue;
+import com.eclipse.gameObject.EquipItem;
 import com.eclipse.sniffer.enums.EnchantList;
 import com.eclipse.sniffer.enums.MonsterList;
 import com.eclipse.sniffer.enums.PacketList;
@@ -12,9 +13,11 @@ import com.eclipse.sniffer.network.ROPacketDetail;
 import java.nio.ByteBuffer;
 import java.util.*;
 
+import com.eclipse.sniffer.tables.ItemEnchantProperty;
 import com.eclipse.sniffer.tables.ItemNames;
 import com.eclipse.sniffer.tables.MonsterNames;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class ActorDecrypt {
@@ -29,11 +32,14 @@ public class ActorDecrypt {
             case ACTOR_INFO_NAME_PARTY_GUILD_TITLE:
                 GuildDetailDecrypt.process(pd);
                 break;
+            case ACTOR_DIED_OR_DISAPPEARED:
+                cd.processActorDiedOrDisappeared(pd);
             case ITEM_LIST_START:
             case ITEM_LIST_STACKABLE:
             case ITEM_LIST_NON_STACKABLE:
             case ITEM_LIST_END:
-                cd.processItemList(pd);
+                //cd.processItemList(pd);
+                break;
             default:
                 cd.processActor(pd);
                 break;
@@ -175,14 +181,9 @@ public class ActorDecrypt {
             pjInfo.addProperty("hair_color_id", hairColorId);
             pjInfo.addProperty("clothes_color_id", clothesColorId);
 
-            APIRequest.shared.PUT(new APIRequestQueue("/characters/"+ accId +"/"+ charId, pjInfo));
+            //System.out.println((new Date()) +" - "+ pjInfo);
+            APIRequest.shared.PUT(new APIRequestQueue("/characters/"+ accId +"/"+ charId, pjInfo, "PUT"));
 
-        }
-
-        if (!GeneralInfoDecrypt.isProbablyArabic(name)) {
-            System.out.println("Name not arabic!");
-            System.out.println(Arrays.toString(inf));
-            System.out.println(PacketDecryption.convertBytesToHex(inf));
         }
     }
 
@@ -211,6 +212,7 @@ public class ActorDecrypt {
                 MonsterList.GHOSTRING,
                 MonsterList.MAYA_PUPLE,
                 MonsterList.G_RANDGRIS,
+                MonsterList.ARCHANGELING,
                 // MVP
                 MonsterList.AMON_RA,
                 MonsterList.ATROCE,
@@ -269,7 +271,7 @@ public class ActorDecrypt {
             mobLocationInfo.addProperty("y", y);
 
             //System.out.println(mobLocationInfo);
-            APIRequest.shared.PUT(new APIRequestQueue("/monsters/location/"+ monsterId, mobLocationInfo));
+            APIRequest.shared.PUT(new APIRequestQueue("/monsters/location/"+ monsterId, mobLocationInfo, "PUT"));
         }
 
     }
@@ -282,6 +284,49 @@ public class ActorDecrypt {
     private static final int REFINE_START = 15;
     private static final int CARD_START = 16;
     private static final int ENCHANT_START = 41;
+
+    private void processEquip(ROPacketDetail pd) {
+
+        new Thread(() -> {
+            if (pd.getContent().length <= START_EQUIP) {
+                System.out.println("Not equip");
+            } else {
+                byte[] inf = pd.getContent();
+                byte[] equipInf = Arrays.copyOfRange(inf,START_EQUIP,inf.length);
+                // Get character name
+                int namePosEnd = 0;
+                for(byte pjName : Arrays.copyOfRange(inf, 0, inf.length)) {
+                    if (pjName == 0) {
+                        break;
+                    }
+                    namePosEnd++;
+                }
+                byte[] bName = Arrays.copyOfRange(inf,0,namePosEnd);
+                JsonObject characterInfo = new JsonObject();
+                characterInfo.addProperty("name", new String(bName));
+                // Divide equip information
+                JsonArray equips = new JsonArray();
+                for(int i = 0; i < equipInf.length; i += 67) {
+                    byte[] bEquip   = Arrays.copyOfRange(inf,i,i+EQUIP_INFO_SIZE);
+
+                    EquipItem ei = processEquipItem(bEquip);
+
+                    JsonObject equip = new JsonObject();
+                    equip.addProperty("item_id", ei.getItemId());
+                    equip.addProperty("pos", ei.getPosition());
+                    equip.addProperty("refine", ei.getRefine());
+                    equip.add("cards", ei.getCards());
+                    equip.add("enchants", ei.getEnchants());
+                    equips.add(equip);
+                }
+                characterInfo.add("equip", equips);
+
+                System.out.println(characterInfo);
+            }
+
+        }).start();
+    }
+
 
     /**
      * EXAMPLES
@@ -312,42 +357,9 @@ public class ActorDecrypt {
      * Ana - Superior mask                                0D.01.02.00.00.01.02.00.00
      * Clein - Custome Fox                                0D.00.18.00.00.00.18.00.00
      * Clein - Rana                                       04.00.04.00.00.00.04.00.00
-     * @param pd
+     * @param inf
      */
-    private void processEquip(ROPacketDetail pd) {
-
-        new Thread(() -> {
-            if (pd.getContent().length <= START_EQUIP) {
-                System.out.println("Not equip");
-            } else {
-                byte[] inf = pd.getContent();
-                byte[] equipInf = Arrays.copyOfRange(inf,START_EQUIP,inf.length);
-                // Get character name
-                int namePosEnd = 0;
-                for(byte pjName : Arrays.copyOfRange(inf, 0, inf.length)) {
-                    if (pjName == 0) {
-                        break;
-                    }
-                    namePosEnd++;
-                }
-                byte[] bName = Arrays.copyOfRange(inf,0,namePosEnd);
-                JsonObject characterInfo = new JsonObject();
-                characterInfo.addProperty("name", new String(bName));
-                // Divide equip information
-                JsonArray equips = new JsonArray();
-                for(int i = 0; i < equipInf.length; i += 67) {
-                    byte[] bEquip   = Arrays.copyOfRange(inf,i,i+EQUIP_INFO_SIZE);
-                    equips.add(processEquipItem(bEquip));
-                }
-                characterInfo.add("equip", equips);
-
-                System.out.println(characterInfo);
-            }
-
-        }).start();
-    }
-
-    private JsonObject processEquipItem(byte[] inf) {
+    private EquipItem processEquipItem(byte[] inf) {
 
         byte[] bItemId  = NetPacket.reverseContent(Arrays.copyOfRange(inf, ITEM_ID_START, ITEM_ID_START+4));
         byte[] bPos     = Arrays.copyOfRange(inf, POSITION_START, POSITION_START+9);
@@ -377,15 +389,15 @@ public class ActorDecrypt {
         //short pos   = (ByteBuffer.wrap(bPos)).getShort();
         int itemId  = (ByteBuffer.wrap(bItemId)).getInt();
 
-        JsonObject equip = new JsonObject();
-        //equip.addProperty("position", pos);
-        equip.addProperty("item_id", itemId);
-        equip.addProperty("refine", bRefine);
-        equip.addProperty("pos", PacketDecryption.convertBytesToHex(bPos));
-        if (cards.size() > 0) equip.add("cards", cards);
-        if (enchants.size() > 0) equip.add("enchants", enchants);
+        EquipItem ei = new EquipItem(
+                itemId,
+                bRefine,
+                PacketDecryption.convertBytesToHex(bPos),
+                cards,
+                enchants
+        );
 
-        return equip;
+        return ei;
     }
 
     private static final int ITEM_LIST_ID_START = 2;
@@ -433,14 +445,49 @@ public class ActorDecrypt {
                         byte[] item = Arrays.copyOfRange(itemsNonStack, i, i+67);
 
                         // Decrypt info
-                        JsonObject equipItem = processEquipItem(item);
-                        System.out.println("1\t"+ ItemNames.getItemId(equipItem.get("item_id").getAsInt()) +"\t"+ equipItem.get("cards") +"\t"+ equipItem.get("enchants"));
+                        EquipItem equipItem = processEquipItem(item);
+
+                        // Cards
+                        StringBuilder cardsList = new StringBuilder();
+                        for(JsonElement card : equipItem.getCards()) {
+                            cardsList.append(ItemNames.getItemId(card.getAsInt())).append(",");
+                        }
+
+                        // Enchants
+                        StringBuilder enchantsList = new StringBuilder();
+                        for(JsonElement enchant : equipItem.getEnchants()) {
+                            JsonObject encDet = enchant.getAsJsonObject();
+                            String prettyFormat = String.format(ItemEnchantProperty.getEnchant(EnchantList.valueOf(encDet.get("type").getAsString())), encDet.get("val").getAsInt());
+                            enchantsList.append("\t").append(prettyFormat);
+                        }
+
+                        System.out.println("\t"+ ItemNames.getItemId(equipItem.getItemId()) +"\t"+ cardsList + enchantsList);
 
                     }
                     break;
             }
         }).start();
 
+    }
+
+    public static final int DIED_DISAPPEARED_FLAG = 4;
+    private void processActorDiedOrDisappeared(ROPacketDetail pd) {
+        new Thread(() -> {
+            byte[] inf = pd.getContent();
+            // Actor died
+            if (inf[DIED_DISAPPEARED_FLAG] == 1) {
+                byte[] bId = NetPacket.reverseContent(Arrays.copyOfRange(inf, 0, 4));
+                int monsMapId = (ByteBuffer.wrap(bId)).getInt();
+                System.out.println("DIE! "+ monsMapId);
+
+                JsonObject diedInfo = new JsonObject();
+                diedInfo.addProperty("id", monsMapId);
+                diedInfo.addProperty("timestamp", (new Date()).getTime());
+
+                //System.out.println(mobLocationInfo);
+                APIRequest.shared.POST(new APIRequestQueue("/monsters/died/"+ monsMapId, diedInfo, "POST"));
+            }
+        }).start();
     }
 
 }
