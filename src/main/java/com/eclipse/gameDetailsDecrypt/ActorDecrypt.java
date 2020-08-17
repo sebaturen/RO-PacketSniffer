@@ -3,8 +3,8 @@ package com.eclipse.gameDetailsDecrypt;
 import com.eclipse.apiRequest.APIRequest;
 import com.eclipse.apiRequest.APIRequestQueue;
 import com.eclipse.gameObject.EquipItem;
-import com.eclipse.sniffer.enums.EnchantList;
-import com.eclipse.sniffer.enums.MonsterList;
+import com.eclipse.gameObject.enums.EnchantList;
+import com.eclipse.gameObject.enums.MonsterList;
 import com.eclipse.sniffer.enums.PacketList;
 import com.eclipse.sniffer.network.NetPacket;
 import com.eclipse.sniffer.network.PacketDecryption;
@@ -13,9 +13,9 @@ import com.eclipse.sniffer.network.ROPacketDetail;
 import java.nio.ByteBuffer;
 import java.util.*;
 
-import com.eclipse.sniffer.tables.ItemEnchantProperty;
-import com.eclipse.sniffer.tables.ItemNames;
-import com.eclipse.sniffer.tables.MonsterNames;
+import com.eclipse.gameObject.tables.ItemEnchantProperty;
+import com.eclipse.gameObject.tables.ItemNames;
+import com.eclipse.gameObject.tables.MonsterNames;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -478,7 +478,6 @@ public class ActorDecrypt {
             if (inf[DIED_DISAPPEARED_FLAG] == 1) {
                 byte[] bId = NetPacket.reverseContent(Arrays.copyOfRange(inf, 0, 4));
                 int monsMapId = (ByteBuffer.wrap(bId)).getInt();
-                System.out.println("DIE! "+ monsMapId);
 
                 JsonObject diedInfo = new JsonObject();
                 diedInfo.addProperty("id", monsMapId);

@@ -9,6 +9,7 @@ import java.io.IOError;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,7 @@ public class PacketInterceptor {
             if (srcAddr.getHostAddress().matches("128.241.[0-9]*.[0-9]*")) {
 
                 if (packetList.size() > 10) {
-                    //Sniffer.restartPacketDecrypt();
+                    System.exit(0);
                     System.out.println("SERVICE IS DOWN! RESTART NOW IT TO WORK AGAIN ["+ packetList.size() +"]");
                 }
                 //System.out.print("RO Packet ["+ packetList.size() +"]");

@@ -1,6 +1,6 @@
-package com.eclipse.sniffer.tables;
+package com.eclipse.gameObject.tables;
 
-import com.eclipse.sniffer.enums.EnchantList;
+import com.eclipse.gameObject.enums.EnchantList;
 
 import java.util.HashMap;
 import java.util.Map;

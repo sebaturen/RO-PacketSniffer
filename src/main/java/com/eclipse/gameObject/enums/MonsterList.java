@@ -1,4 +1,4 @@
-package com.eclipse.sniffer.enums;
+package com.eclipse.gameObject.enums;
 
 import java.util.Arrays;
 import java.util.Optional;

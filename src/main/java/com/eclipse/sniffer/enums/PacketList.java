@@ -231,7 +231,8 @@ public enum PacketList {
     CARD_MERGE_LIST("017B"),
     CARD_MERGE_STATUS("017D"),
     // ??
-    //changeToInGameState (0077)
+    CHANGE_TO_IN_GAME_STATE("0077"),
+    RENTAL_EXPIRED("0299"),
     BLADE_STOP("01D1"),
     ITEM_UPGRADE("0188"),
     REFINE_UI_INFO("0AA2"),

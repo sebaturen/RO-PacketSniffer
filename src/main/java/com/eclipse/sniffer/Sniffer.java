@@ -8,22 +8,29 @@ import com.eclipse.sniffer.network.PacketDecryption;
 import com.eclipse.sniffer.network.ROPacketDetail;
 import com.eclipse.sniffer.network.PacketInterceptor;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class Sniffer {
 
+    private static String[] runArgs;
     private static String apiKey;
     private static PacketInterceptor pInter;
     private static final PacketDecryption pDecrypt = new PacketDecryption();
-    private static Thread executorNet;
-    private static Thread executorRO;
+    private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private static boolean verbose = false;
-    private static boolean threadStatus = true;
 
     public static void main(String... args) {
+        runArgs = args;
         pInter = new PacketInterceptor(args[0]);
         apiKey = args[1];
         netPacketAddNotification();
@@ -37,35 +44,21 @@ public class Sniffer {
     /**
      * List a new packet exist
      */
-    public static void netPacketAddNotification() {
-        if (executorNet != null && executorNet.isAlive()) {
-            executorNet.interrupt();
-            threadStatus = false;
-        }
-        executorNet = null;
-        executorNet = new Thread(() -> {
-            while (threadStatus) {
-                //System.out.print("- "+ pInter.packetList.size() +" ");
-                while (pInter.packetList.size() != 0) {
-                    pDecrypt.decryption(pInter.packetList.remove(0));
-                }
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+    private static void netPacketAddNotification() {
+        executor.scheduleAtFixedRate(() -> {
+            while (pInter.packetList.size() != 0) {
+                pDecrypt.decryption(pInter.packetList.remove(0));
             }
-        });
-        executorNet.start();
+        }, 0, 100, TimeUnit.MILLISECONDS);
     }
+
 
     /**
      * Start when a new packet is added.
      */
-    public static void packetAddNotification() {
+    private static void packetAddNotification() {
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         executor.scheduleAtFixedRate(() -> {
-                //System.out.print("PNot --");
                 ROPacketDetail pd;
                 while( (pd = PacketDecryption.getPacket()) != null) {
                     if (verbose) {
@@ -94,8 +87,7 @@ public class Sniffer {
                             GeneralInfoDecrypt.process(pd);
                             break;
                         case UNKNOWN:
-                            System.out.println("UNKNOWN!");
-                            System.out.println(pd);
+                            System.out.print("UNKNOWN! -- "+ pd);
                             break;
                         case NPC_TALK:
                             //System.out.println(pd);
@@ -110,7 +102,6 @@ public class Sniffer {
                 }
         }, 0, 100, TimeUnit.MILLISECONDS);
     }
-
 
     public static String getApiKey() {
         return apiKey;

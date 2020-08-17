@@ -1,6 +1,4 @@
-package com.eclipse.sniffer.tables;
-
-import com.eclipse.sniffer.enums.MonsterList;
+package com.eclipse.gameObject.tables;
 
 import java.io.FileInputStream;
 import java.io.IOException;

@@ -1,6 +1,6 @@
-package com.eclipse.sniffer.tables;
+package com.eclipse.gameObject.tables;
 
-import com.eclipse.sniffer.enums.MonsterList;
+import com.eclipse.gameObject.enums.MonsterList;
 
 import java.util.HashMap;
 import java.util.Map;

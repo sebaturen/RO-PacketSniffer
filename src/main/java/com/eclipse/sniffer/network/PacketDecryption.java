@@ -85,7 +85,7 @@ public class PacketDecryption {
                         from += 2;
                     }
                     // If the packet info continue in next packet
-                    if (to > sepContent.length) {
+                    if ((to+from) > sepContent.length) {
                         delayPacket.put(netPacket.getPort(), sepContent);
                         break;
                     }
@@ -96,7 +96,7 @@ public class PacketDecryption {
                     }
                     sepContent = Arrays.copyOfRange(sepContent, pSize, sepContent.length);
                 } else {
-                    System.out.println("UNKNOWN PACKET ["+ pList +"] "+ Arrays.toString(sepContent)); // FULL PACKET -> "+ Arrays.toString(netPacket.getContent()));
+                    //System.out.println("UNKNOWN PACKET ["+ pList +"] "+ Arrays.toString(sepContent)); // FULL PACKET -> "+ Arrays.toString(netPacket.getContent()));
                     sepContent = null;
                 }
             } while (sepContent != null && sepContent.length > 0);
