@@ -70,6 +70,7 @@ public enum PacketList {
     GUILD_EXPULSION("015C"),
     GUILD_UNALLY("0184"),
     GUILD_MEMBER_SETTING_LIST("0160"),
+    GUILD_UPDATE_MEMBER_POSITION("0156"),
     // VENDOR
     VENDOR_ITEMS_LIST("0A8D"),
     // BUYING
@@ -199,6 +200,7 @@ public enum PacketList {
     // INVENTORY
     INVENTORY_ITEM_REMOVED("07FA"),
     INVENTORY_ITEM_REMOVED_2("00AF"),
+    INVENTORY_ITEM_STACKEABLE("0900"),
     INVENTORY_ITEMS_NO_STACKABLE("0A0D"),
     INVENTORY_ITEMS_NO_STACKABLE_2("00A4"),
     INVENTORY_ITEM_FAVORITE("0908"),
@@ -230,6 +232,10 @@ public enum PacketList {
     // CARDS
     CARD_MERGE_LIST("017B"),
     CARD_MERGE_STATUS("017D"),
+    // PET
+    PET_FOOD("01A3"),
+    PET_INFO("01A2"),
+    PET_EGG_LIST("01A6"),
     // ??
     CHANGE_TO_IN_GAME_STATE("0077"),
     RENTAL_EXPIRED("0299"),
@@ -306,6 +312,10 @@ public enum PacketList {
                 .findFirst();
 
         return opt.orElse(PacketList.UNKNOWN);
+    }
+
+    public String getValue() {
+        return ident;
     }
 
 }

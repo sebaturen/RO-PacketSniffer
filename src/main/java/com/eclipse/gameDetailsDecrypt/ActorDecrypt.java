@@ -181,7 +181,9 @@ public class ActorDecrypt {
             pjInfo.addProperty("hair_color_id", hairColorId);
             pjInfo.addProperty("clothes_color_id", clothesColorId);
 
-            //System.out.println((new Date()) +" - "+ pjInfo);
+            if (charId != 307313 && charId != 320947) {
+                //System.out.println((new Date()) +" - "+ pjInfo);
+            }
             APIRequest.shared.PUT(new APIRequestQueue("/characters/"+ accId +"/"+ charId, pjInfo, "PUT"));
 
         }

@@ -1,5 +1,11 @@
 package com.eclipse.apiRequest;
 
+import com.eclipse.gameDetailsDecrypt.ActorDecrypt;
+import com.eclipse.gameDetailsDecrypt.GeneralInfoDecrypt;
+import com.eclipse.gameDetailsDecrypt.GuildDetailDecrypt;
+import com.eclipse.guildWoeBreaker.WoEBreaker;
+import com.eclipse.sniffer.network.PacketDecryption;
+import com.eclipse.sniffer.network.ROPacketDetail;
 import com.google.gson.JsonObject;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -14,6 +20,9 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class APIRequest {
 
@@ -45,6 +54,20 @@ public class APIRequest {
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
         } catch (Exception e) {
         }
+
+        // Schedule to try send the queue elements
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        executor.scheduleAtFixedRate(() -> {
+            if (queue.size() > 0) {
+                System.out.println("API Queue Size: "+ queue.size());
+                try {
+                    APIRequestQueue q = queue.remove(0);
+                    request(q.getType(), q);
+                } catch (IndexOutOfBoundsException e) {
+                    // The queue not have element, other thread use
+                }
+            }
+        }, 0, 100, TimeUnit.MILLISECONDS);
 
     }
 

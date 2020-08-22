@@ -44,8 +44,13 @@ public class GeneralInfoDecrypt {
         new Thread(() -> {
             String msg = new String(pd.getContent());
 
-            Pattern pattern = Pattern.compile(GuildDetailDecrypt.woeBreakerPattern);
-            if ((pattern.matcher(msg)).matches()) {
+            Pattern woe1Pattern = Pattern.compile(GuildDetailDecrypt.woeBreakerPattern);
+            if ((woe1Pattern.matcher(msg)).matches()) {
+                GuildDetailDecrypt.process(pd);
+            }
+
+            Pattern woe2Pattern = Pattern.compile(GuildDetailDecrypt.woe2BreakerPattern);
+            if ((woe2Pattern.matcher(msg)).matches()) {
                 GuildDetailDecrypt.process(pd);
             }
 

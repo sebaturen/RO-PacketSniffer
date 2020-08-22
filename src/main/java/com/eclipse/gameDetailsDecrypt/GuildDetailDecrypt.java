@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 public class GuildDetailDecrypt {
 
@@ -39,7 +40,6 @@ public class GuildDetailDecrypt {
      * @param pd
      */
     private void processGuildInfo(ROPacketDetail pd) {
-
         new Thread(() -> {
             byte[] inf = pd.getContent();
             byte[] bAccId = NetPacket.reverseContent(Arrays.copyOfRange(inf, ACCOUNTS_ID_START, ACCOUNTS_ID_START+4));
@@ -113,6 +113,7 @@ public class GuildDetailDecrypt {
     }
 
     public static final String woeBreakerPattern = "(.*)The \\[.*\\] castle has been conquered by the \\[.*] guild.(.*)";
+    public static final String woe2BreakerPattern = "(.*)The \\[.*\\] guild conquered the \\[.*] stronghold (.*).";
     /**
      * Woe Breaker pattern:
      *      The \[.*\] castle has been conquered by the \[.*] guild.
@@ -120,56 +121,107 @@ public class GuildDetailDecrypt {
      */
     private void processGuildBreaker(ROPacketDetail pd) {
         new Thread(() -> {
+
             String msg = new String(pd.getContent());
 
-            // CAST
-            int postCast_start  = msg.indexOf('[');
-            int postCast_end    = msg.indexOf(']');
-            String cast = msg.substring(postCast_start+1, postCast_end);
-            msg = msg.substring(postCast_end+1);
-
-            // GUILD
-            int postGuild_start = msg.indexOf('[');
-            int postGuild_end   = msg.indexOf(']');
-            String guild = msg.substring(postGuild_start+1, postGuild_end);
-
-            int castId = 0;
-            switch (cast) {
-                case "Valkyrie Realms 1": castId = 1; break;
-                case "Valkyrie Realms 2": castId = 2; break;
-                case "Valkyrie Realms 3": castId = 3; break;
-                case "Valkyrie Realms 4": castId = 4; break;
-                case "Valkyrie Realms 5": castId = 5; break;
-                case "BalderGuild1": castId = 6; break;
-                case "BalderGuild2": castId = 7; break;
-                case "BalderGuild3": castId = 8; break;
-                case "BalderGuild4": castId = 9; break;
-                case "BalderGuild5": castId = 10; break;
-                case "Britoniah Guild 1": castId = 11; break;
-                case "Britoniah Guild 2": castId = 12; break;
-                case "Britoniah Guild 3": castId = 13; break;
-                case "Britoniah Guild 4": castId = 14; break;
-                case "Britoniah Guild 5": castId = 15; break;
-                case "Luina Guild 1": castId = 16; break;
-                case "Luina Guild 2": castId = 17; break;
-                case "Luina Guild 3": castId = 18; break;
-                case "Luina Guild 4": castId = 19; break;
-                case "Luina Guild 5": castId = 20; break;
+            Pattern woe1Pattern = Pattern.compile(GuildDetailDecrypt.woeBreakerPattern);
+            if ((woe1Pattern.matcher(msg)).matches()) {
+                processWoEBreaker(msg, WOE_1);
             }
 
-            if (castId > 0) {
-
-                JsonObject breakInfo = new JsonObject();
-                breakInfo.addProperty("cast_id", castId);
-                breakInfo.addProperty("guild_name", guild);
-                breakInfo.addProperty("timestamp", (new Date()).getTime());
-
-                APIRequest.shared.PUT(new APIRequestQueue("/woe/break/cast/"+ castId, breakInfo, "PUT"));
-
+            Pattern woe2Pattern = Pattern.compile(GuildDetailDecrypt.woe2BreakerPattern);
+            if ((woe2Pattern.matcher(msg)).matches()) {
+                processWoEBreaker(msg, WOE_2);
             }
 
         }).start();
     }
 
+    /**
+     * Type:
+     *      1 => Woe 1
+     *      2 => Woe 2
+     */
+    private static final int WOE_1 = 1;
+    private static final int WOE_2 = 2;
+    private void processWoEBreaker(String msg, int type) {
+
+        String cast, guild;
+        int postCast_start, postCast_end, postGuild_start, postGuild_end;
+        switch (type) {
+            case WOE_1:
+                // CAST
+                postCast_start  = msg.indexOf('[');
+                postCast_end    = msg.indexOf(']');
+                cast = msg.substring(postCast_start+1, postCast_end);
+                msg = msg.substring(postCast_end+1);
+
+                // GUILD
+                postGuild_start = msg.indexOf('[');
+                postGuild_end   = msg.indexOf(']');
+                guild = msg.substring(postGuild_start+1, postGuild_end);
+                break;
+            case WOE_2:
+                // GUILD
+                postGuild_start = msg.indexOf('[');
+                postGuild_end   = msg.indexOf(']');
+                guild = msg.substring(postGuild_start+1, postGuild_end);
+                msg = msg.substring(postGuild_end+1);
+
+                // CAST
+                postCast_start  = msg.indexOf('[');
+                postCast_end    = msg.indexOf(']');
+                cast = msg.substring(postCast_start+1, postCast_end);
+                break;
+            default:
+                return;
+        }
+
+        int castId = 0;
+        switch (cast) {
+            case "Valkyrie Realms 1": castId = 1; break;
+            case "Valkyrie Realms 2": castId = 2; break;
+            case "Valkyrie Realms 3": castId = 3; break;
+            case "Valkyrie Realms 4": castId = 4; break;
+            case "Valkyrie Realms 5": castId = 5; break;
+            case "BalderGuild1": castId = 6; break;
+            case "BalderGuild2": castId = 7; break;
+            case "BalderGuild3": castId = 8; break;
+            case "BalderGuild4": castId = 9; break;
+            case "BalderGuild5": castId = 10; break;
+            case "Britoniah Guild 1": castId = 11; break;
+            case "Britoniah Guild 2": castId = 12; break;
+            case "Britoniah Guild 3": castId = 13; break;
+            case "Britoniah Guild 4": castId = 14; break;
+            case "Britoniah Guild 5": castId = 15; break;
+            case "Luina Guild 1": castId = 16; break;
+            case "Luina Guild 2": castId = 17; break;
+            case "Luina Guild 3": castId = 18; break;
+            case "Luina Guild 4": castId = 19; break;
+            case "Luina Guild 5": castId = 20; break;
+            case "Nithafjoll 1": castId = 21; break;
+            case "Nithafjoll 2": castId = 22; break;
+            case "Nithafjoll 3": castId = 23; break;
+            case "Nithafjoll 4": castId = 24; break;
+            case "Nithafjoll 5": castId = 25; break;
+            case "Valfreyja 1": castId = 26; break;
+            case "Valfreyja 2": castId = 27; break;
+            case "Valfreyja 3": castId = 28; break;
+            case "Valfreyja 4": castId = 29; break;
+            case "Valfreyja 5": castId = 30; break;
+        }
+
+        if (castId > 0) {
+
+            JsonObject breakInfo = new JsonObject();
+            breakInfo.addProperty("cast_id", castId);
+            breakInfo.addProperty("guild_name", guild);
+            breakInfo.addProperty("timestamp", (new Date()).getTime());
+
+            APIRequest.shared.PUT(new APIRequestQueue("/woe/break/cast/"+ castId, breakInfo, "PUT"));
+
+        }
+
+    }
 
 }
