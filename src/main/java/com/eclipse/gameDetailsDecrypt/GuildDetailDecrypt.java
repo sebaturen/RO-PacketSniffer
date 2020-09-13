@@ -112,8 +112,9 @@ public class GuildDetailDecrypt {
         }).start();
     }
 
-    public static final String woeBreakerPattern = "(.*)The \\[.*\\] castle has been conquered by the \\[.*] guild.(.*)";
-    public static final String woe2BreakerPattern = "(.*)The \\[.*\\] guild conquered the \\[.*] stronghold (.*).";
+    public static final String woeBreakerPattern    = "(.*)The \\[.*\\] castle has been conquered by the \\[.*] guild.(.*)";
+    public static final String woe2StartPattern     = "(.*)The \\[.*\\] stronghold of (.*) is occupied by the \\[.*] Guild.(.*)";
+    public static final String woe2BreakerPattern   = "(.*)The \\[.*\\] guild conquered the \\[.*] (.*).";
     /**
      * Woe Breaker pattern:
      *      The \[.*\] castle has been conquered by the \[.*] guild.
@@ -126,12 +127,17 @@ public class GuildDetailDecrypt {
 
             Pattern woe1Pattern = Pattern.compile(GuildDetailDecrypt.woeBreakerPattern);
             if ((woe1Pattern.matcher(msg)).matches()) {
-                processWoEBreaker(msg, WOE_1);
+                processWoEBreaker(msg, WOE_1, pd.getTimestamp().getTime());
+            }
+
+            Pattern woe2Start = Pattern.compile(GuildDetailDecrypt.woe2StartPattern);
+            if ((woe2Start.matcher(msg)).matches()) {
+                processWoEBreaker(msg, WOE_2_START, pd.getTimestamp().getTime());
             }
 
             Pattern woe2Pattern = Pattern.compile(GuildDetailDecrypt.woe2BreakerPattern);
             if ((woe2Pattern.matcher(msg)).matches()) {
-                processWoEBreaker(msg, WOE_2);
+                processWoEBreaker(msg, WOE_2_BREAK, pd.getTimestamp().getTime());
             }
 
         }).start();
@@ -143,13 +149,14 @@ public class GuildDetailDecrypt {
      *      2 => Woe 2
      */
     private static final int WOE_1 = 1;
-    private static final int WOE_2 = 2;
-    private void processWoEBreaker(String msg, int type) {
+    private static final int WOE_2_START = 2;
+    private static final int WOE_2_BREAK = 3;
+    private void processWoEBreaker(String msg, int type, long time) {
 
         String cast, guild;
         int postCast_start, postCast_end, postGuild_start, postGuild_end;
         switch (type) {
-            case WOE_1:
+            case WOE_1: case WOE_2_START:
                 // CAST
                 postCast_start  = msg.indexOf('[');
                 postCast_end    = msg.indexOf(']');
@@ -158,10 +165,19 @@ public class GuildDetailDecrypt {
 
                 // GUILD
                 postGuild_start = msg.indexOf('[');
-                postGuild_end   = msg.indexOf(']');
+                int counterBlock = 0;
+                int i = 0;
+                for (char n : msg.substring(postGuild_start).toCharArray()) {
+                    if (n == '[') counterBlock++;
+                    if (n == ']') counterBlock--;
+                    System.out.println(n);
+                    if (counterBlock == 0) break;
+                    i++;
+                }
+                postGuild_end = postGuild_start+i;
                 guild = msg.substring(postGuild_start+1, postGuild_end);
                 break;
-            case WOE_2:
+            case WOE_2_BREAK:
                 // GUILD
                 postGuild_start = msg.indexOf('[');
                 postGuild_end   = msg.indexOf(']');
@@ -199,16 +215,16 @@ public class GuildDetailDecrypt {
             case "Luina Guild 3": castId = 18; break;
             case "Luina Guild 4": castId = 19; break;
             case "Luina Guild 5": castId = 20; break;
-            case "Nithafjoll 1": castId = 21; break;
-            case "Nithafjoll 2": castId = 22; break;
-            case "Nithafjoll 3": castId = 23; break;
-            case "Nithafjoll 4": castId = 24; break;
-            case "Nithafjoll 5": castId = 25; break;
-            case "Valfreyja 1": castId = 26; break;
-            case "Valfreyja 2": castId = 27; break;
-            case "Valfreyja 3": castId = 28; break;
-            case "Valfreyja 4": castId = 29; break;
-            case "Valfreyja 5": castId = 30; break;
+            case "Valfreyja 1": castId = 21; break;
+            case "Valfreyja 2": castId = 22; break;
+            case "Valfreyja 3": castId = 23; break;
+            case "Valfreyja 4": castId = 24; break;
+            case "Valfreyja 5": castId = 25; break;
+            case "Nithafjoll 1": castId = 26; break;
+            case "Nithafjoll 2": castId = 27; break;
+            case "Nithafjoll 3": castId = 28; break;
+            case "Nithafjoll 4": castId = 29; break;
+            case "Nithafjoll 5": castId = 30; break;
         }
 
         if (castId > 0) {
@@ -216,9 +232,11 @@ public class GuildDetailDecrypt {
             JsonObject breakInfo = new JsonObject();
             breakInfo.addProperty("cast_id", castId);
             breakInfo.addProperty("guild_name", guild);
-            breakInfo.addProperty("timestamp", (new Date()).getTime());
+            breakInfo.addProperty("timestamp", time);
+            System.out.println(breakInfo);
 
-            APIRequest.shared.PUT(new APIRequestQueue("/woe/break/cast/"+ castId, breakInfo, "PUT"));
+            APIRequest.shared.POST(new APIRequestQueue("/woe/break/cast/"+ castId, breakInfo, "POST"));
+            System.out.println("enviado!");
 
         }
 

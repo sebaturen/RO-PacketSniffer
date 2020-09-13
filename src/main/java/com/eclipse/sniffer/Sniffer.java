@@ -8,22 +8,15 @@ import com.eclipse.sniffer.network.PacketDecryption;
 import com.eclipse.sniffer.network.ROPacketDetail;
 import com.eclipse.sniffer.network.PacketInterceptor;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class Sniffer {
 
     private static String[] runArgs;
-    private static String apiKey;
+    public static String apiKey;
     private static PacketInterceptor pInter;
     private static final PacketDecryption pDecrypt = new PacketDecryption();
     private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
@@ -52,7 +45,6 @@ public class Sniffer {
         }, 0, 100, TimeUnit.MILLISECONDS);
     }
 
-
     /**
      * Start when a new packet is added.
      */
@@ -62,7 +54,7 @@ public class Sniffer {
                 ROPacketDetail pd;
                 while( (pd = PacketDecryption.getPacket()) != null) {
                     if (verbose) {
-                        System.out.println(pd);
+                        System.out.println(pd +" == "+ PacketDecryption.convertBytesToHex(pd.getContent()));
                     }
                     switch (pd.getName()) {
                         case LOCAL_BROADCAST:
@@ -90,8 +82,12 @@ public class Sniffer {
                             System.out.print("UNKNOWN! -- "+ pd);
                             break;
                         case NPC_TALK:
-                            //System.out.println(pd);
-                            //System.out.println(new String(pd.getContent()));
+                            System.out.println(pd);
+                            System.out.println(new String(pd.getContent()));
+                            break;
+                        case MONSTER_HP_INFO_TINY:
+                            //System.out.print(pd +" == "+ Arrays.toString(pd.getContent()) +" // ");
+                            //System.out.println(PacketDecryption.convertBytesToHex(pd.getContent()));
                             break;
                     }
                 }

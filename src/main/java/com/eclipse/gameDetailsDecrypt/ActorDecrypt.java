@@ -182,7 +182,7 @@ public class ActorDecrypt {
             pjInfo.addProperty("clothes_color_id", clothesColorId);
 
             if (charId != 307313 && charId != 320947) {
-                //System.out.println((new Date()) +" - "+ pjInfo);
+               // System.out.println((new Date()) +" - "+ pjInfo);
             }
             APIRequest.shared.PUT(new APIRequestQueue("/characters/"+ accId +"/"+ charId, pjInfo, "PUT"));
 
@@ -190,6 +190,7 @@ public class ActorDecrypt {
     }
 
     private void processMonsterShowInfo(byte[] inf, PacketList packetType, int port) {
+        //System.out.println("Monster ! ["+ packetType +"] "+ PacketDecryption.convertBytesToHex(inf));
         byte[] bId = NetPacket.reverseContent(Arrays.copyOfRange(inf, ID_START, ID_START+4));
         int monsMapId = (ByteBuffer.wrap(bId)).getInt();
         byte[] bMonterId = NetPacket.reverseContent(Arrays.copyOfRange(inf, JOB_ID_START, JOB_ID_START+2));

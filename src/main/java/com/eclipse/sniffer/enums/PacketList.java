@@ -298,7 +298,9 @@ public enum PacketList {
     QUIT_RESPONSE("018B"),
     CAST_CANCELLED("01B9"),
     ACTION_UI("0AF0"),
-    SYSTEM_CHAT("009A");
+    SYSTEM_CHAT("009A"),
+    // GMs
+    GM_REQ_ACC_NAME("01E0");
 
     private final String ident;
 

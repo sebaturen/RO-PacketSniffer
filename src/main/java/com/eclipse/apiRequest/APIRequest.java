@@ -91,14 +91,17 @@ public class APIRequest {
             out.write(request.getInfo().toString());
             out.close();
 
-            httpCon.getInputStream();
             int responseCode = httpCon.getResponseCode();
+
+            if (responseCode == 200) {
+                httpCon.getInputStream();
+            }
 
             if (responseCode != 200 && responseCode != 304 && responseCode != 403) {
                 if (responseCode == 500) {
                     queue.add(request);
                 }
-                System.out.println("Put info error! code!: "+ httpCon.getResponseCode());
+                System.out.println("Put info error! code!: "+ responseCode);
             } else {
                 if (queue.size() > 0) {
                     System.out.println("API Queue Size: "+ queue.size());

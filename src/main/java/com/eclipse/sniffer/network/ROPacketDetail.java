@@ -37,6 +37,14 @@ public class ROPacketDetail {
         return packetHeader;
     }
 
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
     @Override
     public String toString() {
         return "{\"_class\":\"ROPacketDetail\", " +
