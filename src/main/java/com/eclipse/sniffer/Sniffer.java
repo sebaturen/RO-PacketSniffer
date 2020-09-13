@@ -54,7 +54,7 @@ public class Sniffer {
                 ROPacketDetail pd;
                 while( (pd = PacketDecryption.getPacket()) != null) {
                     if (verbose) {
-                        System.out.println(pd +" == "+ PacketDecryption.convertBytesToHex(pd.getContent()));
+                        System.out.println(pd);
                     }
                     switch (pd.getName()) {
                         case LOCAL_BROADCAST:
