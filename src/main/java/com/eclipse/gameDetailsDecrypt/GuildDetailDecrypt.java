@@ -170,7 +170,6 @@ public class GuildDetailDecrypt {
                 for (char n : msg.substring(postGuild_start).toCharArray()) {
                     if (n == '[') counterBlock++;
                     if (n == ']') counterBlock--;
-                    System.out.println(n);
                     if (counterBlock == 0) break;
                     i++;
                 }
@@ -236,7 +235,6 @@ public class GuildDetailDecrypt {
             System.out.println(breakInfo);
 
             APIRequest.shared.POST(new APIRequestQueue("/woe/break/cast/"+ castId, breakInfo, "POST"));
-            System.out.println("enviado!");
 
         }
 

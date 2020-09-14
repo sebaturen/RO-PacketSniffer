@@ -19,9 +19,8 @@ public class ItemNames {
         } catch(IOException e) {
             System.out.println(e.toString());
         }
-
-
     }
+
     public static String getItemId(int itemId) {
 
         return items.getProperty(itemId+"");
