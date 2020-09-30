@@ -17,22 +17,21 @@ public class GuildDetailDecryptTest extends TestCase {
     public void testWoeBreakerMSG() throws InterruptedException {
         JsonObject breakInfo = new JsonObject();
         System.out.println(breakInfo);
-        Sniffer.apiKey = "GriPd5rXzRTjS3ZO4xw8ekVTQMgipSUX";
+        Sniffer.apiKey = "GriPd5rXzRTjS3ZO4xw8ekVTQMgipSUX--";
         Calendar tim = Calendar.getInstance();
 
         // WOE PACKET
         ROPacketDetail pd;
-        pd = new ROPacketDetail(PacketList.SYSTEM_CHAT.getValue(), "The [Nithafjoll 1] stronghold of Himinn is occupied by the [o pai ta on ~] Guild.".getBytes(), 111); tim.setTimeInMillis(1600038000000L); pd.setTimestamp(tim.getTime()); GuildDetailDecrypt.process(pd);
-        pd = new ROPacketDetail(PacketList.SYSTEM_CHAT.getValue(), "The [Nithafjoll 2] stronghold of Andlangr is occupied by the [p2w] Guild.".getBytes(), 111); tim.setTimeInMillis(1600038000000L); pd.setTimestamp(tim.getTime()); GuildDetailDecrypt.process(pd);
-        pd = new ROPacketDetail(PacketList.SYSTEM_CHAT.getValue(), "The [Nithafjoll 3] stronghold of Vidblainn is occupied by the [Double Barrel] Guild.".getBytes(), 111); tim.setTimeInMillis(1600038000000L); pd.setTimestamp(tim.getTime()); GuildDetailDecrypt.process(pd);
-        pd = new ROPacketDetail(PacketList.SYSTEM_CHAT.getValue(), "The [Nithafjoll 4] stronghold of Hljod is occupied by the [Adega de Ubatuba] Guild.".getBytes(), 111); tim.setTimeInMillis(1600038000000L); pd.setTimestamp(tim.getTime()); GuildDetailDecrypt.process(pd);
-        pd = new ROPacketDetail(PacketList.SYSTEM_CHAT.getValue(), "The [Nithafjoll 5] stronghold of Skidbladnir is occupied by the [Dandelion] Guild.".getBytes(), 111); tim.setTimeInMillis(1600038000000L); pd.setTimestamp(tim.getTime()); GuildDetailDecrypt.process(pd);
-        pd = new ROPacketDetail(PacketList.SYSTEM_CHAT.getValue(), "The [Valfreyja 1] stronghold of Mardol is occupied by the [Se Deixar Eu Boto] Guild.".getBytes(), 111); tim.setTimeInMillis(1600038000000L); pd.setTimestamp(tim.getTime()); GuildDetailDecrypt.process(pd);
-        pd = new ROPacketDetail(PacketList.SYSTEM_CHAT.getValue(), "The [Valfreyja 2] stronghold of Cyr is occupied by the [3OO] Guild.".getBytes(), 111); tim.setTimeInMillis(1600038000000L); pd.setTimestamp(tim.getTime()); GuildDetailDecrypt.process(pd);
-        pd = new ROPacketDetail(PacketList.SYSTEM_CHAT.getValue(), "The [Valfreyja 3] stronghold of Horn is occupied by the [o pai ta on ~] Guild.".getBytes(), 111); tim.setTimeInMillis(1600038000000L); pd.setTimestamp(tim.getTime()); GuildDetailDecrypt.process(pd);
-        pd = new ROPacketDetail(PacketList.SYSTEM_CHAT.getValue(), "The [Valfreyja 4] stronghold of Gefn is occupied by the [Dandelion] Guild.".getBytes(), 111); tim.setTimeInMillis(1600038000000L); pd.setTimestamp(tim.getTime()); GuildDetailDecrypt.process(pd);
-        pd = new ROPacketDetail(PacketList.SYSTEM_CHAT.getValue(), "The [Valfreyja 5] stronghold of Badanis is occupied by the [p2w] Guild.".getBytes(), 111); tim.setTimeInMillis(1600038000000L); pd.setTimestamp(tim.getTime()); GuildDetailDecrypt.process(pd);
-
+        pd = new ROPacketDetail(PacketList.SYSTEM_CHAT.getValue(), "The [Nithafjoll 1] stronghold of Himinn is occupied by the [DandeIion] Guild.".getBytes(), 111); tim.setTimeInMillis(1601247600000L); pd.setTimestamp(tim.getTime()); GuildDetailDecrypt.process(pd);
+        pd = new ROPacketDetail(PacketList.SYSTEM_CHAT.getValue(), "The [Nithafjoll 2] stronghold of Andlangr is occupied by the [p2w] Guild.".getBytes(), 111); tim.setTimeInMillis(1601247600000L); pd.setTimestamp(tim.getTime()); GuildDetailDecrypt.process(pd);
+        pd = new ROPacketDetail(PacketList.SYSTEM_CHAT.getValue(), "The [Nithafjoll 3] stronghold of Vidblainn is occupied by the [Se Deixar Eu Boto] Guild.".getBytes(), 111); tim.setTimeInMillis(1601247600000L); pd.setTimestamp(tim.getTime()); GuildDetailDecrypt.process(pd);
+        pd = new ROPacketDetail(PacketList.SYSTEM_CHAT.getValue(), "The [Nithafjoll 4] stronghold of Hljod is occupied by the [3OO] Guild.".getBytes(), 111); tim.setTimeInMillis(1601247600000L); pd.setTimestamp(tim.getTime()); GuildDetailDecrypt.process(pd);
+        pd = new ROPacketDetail(PacketList.SYSTEM_CHAT.getValue(), "The [Nithafjoll 5] stronghold of Skidbladnir is occupied by the [AlphaOmega] Guild.".getBytes(), 111); tim.setTimeInMillis(1601247600000L); pd.setTimestamp(tim.getTime()); GuildDetailDecrypt.process(pd);
+        pd = new ROPacketDetail(PacketList.SYSTEM_CHAT.getValue(), "The [Valfreyja 1] stronghold of Mardol is occupied by the [o pai ta on ~] Guild.".getBytes(), 111); tim.setTimeInMillis(1601247600000L); pd.setTimestamp(tim.getTime()); GuildDetailDecrypt.process(pd);
+        pd = new ROPacketDetail(PacketList.SYSTEM_CHAT.getValue(), "The [Valfreyja 2] stronghold of Cyr is occupied by the [p2w] Guild.".getBytes(), 111); tim.setTimeInMillis(1601247600000L); pd.setTimestamp(tim.getTime()); GuildDetailDecrypt.process(pd);
+        pd = new ROPacketDetail(PacketList.SYSTEM_CHAT.getValue(), "The [Valfreyja 3] stronghold of Horn is occupied by the [Double Barrel] Guild.".getBytes(), 111); tim.setTimeInMillis(1601247600000L); pd.setTimestamp(tim.getTime()); GuildDetailDecrypt.process(pd);
+        pd = new ROPacketDetail(PacketList.SYSTEM_CHAT.getValue(), "The [Valfreyja 4] stronghold of Gefn is occupied by the [Se Deixar Eu Boto] Guild.".getBytes(), 111); tim.setTimeInMillis(1601247600000L); pd.setTimestamp(tim.getTime()); GuildDetailDecrypt.process(pd);
+        pd = new ROPacketDetail(PacketList.SYSTEM_CHAT.getValue(), "The [Valfreyja 5] stronghold of Badanis is occupied by the [Freshmen] Guild.".getBytes(), 111); tim.setTimeInMillis(1601247600000L); pd.setTimestamp(tim.getTime()); GuildDetailDecrypt.process(pd);
         Thread.sleep(100000);
     }
 
