@@ -124,6 +124,7 @@ public class GuildDetailDecrypt {
         new Thread(() -> {
 
             String msg = new String(pd.getContent());
+            System.out.println("Guild Breaker: "+ msg);
 
             Pattern woe1Pattern = Pattern.compile(GuildDetailDecrypt.woeBreakerPattern);
             if ((woe1Pattern.matcher(msg)).matches()) {

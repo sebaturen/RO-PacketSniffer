@@ -8,6 +8,7 @@ import com.eclipse.sniffer.network.PacketDecryption;
 import com.eclipse.sniffer.network.ROPacketDetail;
 import com.eclipse.sniffer.network.PacketInterceptor;
 
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -75,7 +76,7 @@ public class Sniffer {
                         case GUILD_EMBLEM:
                             GuildDetailDecrypt.process(pd);
                             break;
-                        case SYSTEM_CHAT: case MAP_CHANGE: case MAP_LOADED: case MAP_LOADED_2: case MAP_CHANGED:
+                        case SYSTEM_CHAT: case MAP_CHANGE: case MAP_LOADED: case MAP_LOADED_2: case MAP_CHANGED: case CHAT_INFO:
                             GeneralInfoDecrypt.process(pd);
                             break;
                         case UNKNOWN:

@@ -1,11 +1,13 @@
 package com.eclipse.gameDetailsDecrypt;
 
+import com.eclipse.apiRequest.APIRequest;
+import com.eclipse.apiRequest.APIRequestQueue;
+import com.eclipse.sniffer.network.NetPacket;
 import com.eclipse.sniffer.network.ROPacketDetail;
+import com.google.gson.JsonObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.ByteBuffer;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class GeneralInfoDecrypt {
@@ -22,6 +24,8 @@ public class GeneralInfoDecrypt {
             case MAP_CHANGE:
                 gd.processMapChange(pd);
                 break;
+            case CHAT_INFO:
+                gd.processChat(pd);
         }
 
     }
@@ -77,6 +81,44 @@ public class GeneralInfoDecrypt {
         mapName = mapName.substring(0, mapName.length()-4);
 
         currentMap.put(pd.getPort(), mapName);
+    }
+
+    /**
+     *  Account ID	|  ID | Limit | NumUsers | public/private(1/0) | Chat name
+     *  Examples:
+     * ACA90400|14000000|1400|0100|01|736164617364
+     * ACA90400|18000000|1400|0100|01|736164617364
+     * ACA90400|19000000|1400|0100|00|736164617364
+     * @param pd
+     */
+    private void processChat(ROPacketDetail pd) {
+        int post = 0;
+        byte[] bChatInfo = pd.getContent();
+        byte[] bAccountId = NetPacket.reverseContent(Arrays.copyOfRange(bChatInfo, post, post+=4));
+        byte[] bId = NetPacket.reverseContent(Arrays.copyOfRange(bChatInfo, post, post+=4));
+        byte[] bLimit = NetPacket.reverseContent(Arrays.copyOfRange(bChatInfo, post, post+=2));
+        byte[] bNumUsers = NetPacket.reverseContent(Arrays.copyOfRange(bChatInfo, post, post+=2));
+        byte[] bPublicPrivate = NetPacket.reverseContent(Arrays.copyOfRange(bChatInfo, post, post+=1));
+        byte[] bChatName = Arrays.copyOfRange(bChatInfo, post, bChatInfo.length);
+
+        int accountId = (ByteBuffer.wrap(bAccountId)).getInt();
+        int id = (ByteBuffer.wrap(bId)).getInt();
+        short limit = (ByteBuffer.wrap(bLimit)).getShort();
+        short numberUsers = (ByteBuffer.wrap(bNumUsers)).getShort();
+        boolean isPublic = bPublicPrivate[0] == 1;
+        String chatName = new String(bChatName);
+
+        // Check possible sniffer packet error
+        if (accountId > 0 && !isPublic) {
+
+            JsonObject chatInfo = new JsonObject();
+            chatInfo.addProperty("account_id", accountId);
+            chatInfo.addProperty("chat_name", chatName);
+            APIRequest.shared.PUT(new APIRequestQueue("/link/"+ accountId, chatInfo, "PUT"));
+
+            System.out.println("Account ["+ accountId +"]\nid ["+ id +"]\nlimit ["+ limit +"]\nnumberUsers ["+ numberUsers +"]\nisPublic ["+ isPublic +"]\nChatName: ["+ chatName +"]");
+        }
+
     }
 
     public static String getMapName(int port) {

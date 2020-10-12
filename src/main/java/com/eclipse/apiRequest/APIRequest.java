@@ -92,7 +92,6 @@ public class APIRequest {
             out.close();
 
             int responseCode = httpCon.getResponseCode();
-            System.out.println(responseCode);
 
             if (responseCode == 200) {
                 httpCon.getInputStream();

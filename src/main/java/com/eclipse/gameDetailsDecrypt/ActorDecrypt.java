@@ -38,7 +38,7 @@ public class ActorDecrypt {
             case ITEM_LIST_STACKABLE:
             case ITEM_LIST_NON_STACKABLE:
             case ITEM_LIST_END:
-                //cd.processItemList(pd);
+                cd.processItemList(pd);
                 break;
             default:
                 cd.processActor(pd);
@@ -121,7 +121,7 @@ public class ActorDecrypt {
             lvPost += 6;
             namePost += 6;
         } else if (packetType == PacketList.ACTOR_CONNECTED) {
-            sexPos -= 1;
+            //sexPos -= 1;
             lvPost -= 1;
             namePost -= 1;
         }
@@ -184,6 +184,7 @@ public class ActorDecrypt {
             if (charId != 307313 && charId != 320947) {
                // System.out.println((new Date()) +" - "+ pjInfo);
             }
+
             APIRequest.shared.PUT(new APIRequestQueue("/characters/"+ accId +"/"+ charId, pjInfo, "PUT"));
 
         }
@@ -453,7 +454,10 @@ public class ActorDecrypt {
                         // Cards
                         StringBuilder cardsList = new StringBuilder();
                         for(JsonElement card : equipItem.getCards()) {
-                            cardsList.append(ItemNames.getItemId(card.getAsInt())).append(",");
+                            String cardName = ItemNames.getItemId(card.getAsInt());
+                            if (cardName != null) {
+                                cardsList.append(cardName).append(",");
+                            }
                         }
 
                         // Enchants
@@ -464,7 +468,7 @@ public class ActorDecrypt {
                             enchantsList.append("\t").append(prettyFormat);
                         }
 
-                        System.out.println("\t"+ ItemNames.getItemId(equipItem.getItemId()) +"\t"+ cardsList + enchantsList);
+                        System.out.println("1\t"+ ItemNames.getItemId(equipItem.getItemId()) +"\t"+ cardsList + enchantsList);
 
                     }
                     break;
