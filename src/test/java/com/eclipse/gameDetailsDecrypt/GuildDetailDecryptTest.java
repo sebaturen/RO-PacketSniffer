@@ -17,7 +17,7 @@ public class GuildDetailDecryptTest extends TestCase {
     public void testWoeBreakerMSG() throws InterruptedException {
         JsonObject breakInfo = new JsonObject();
         System.out.println(breakInfo);
-        Sniffer.apiKey = "GriPd5rXzRTjS3ZO4xw8ekVTQMgipSUX---";
+        Sniffer.apiKey = "GriPd5rXzRTjS3ZO4xw8ekVTQMgipSUX----";
         Calendar tim = Calendar.getInstance();
 
         // WOE PACKET

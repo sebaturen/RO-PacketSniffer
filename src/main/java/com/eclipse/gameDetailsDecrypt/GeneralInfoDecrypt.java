@@ -2,7 +2,9 @@ package com.eclipse.gameDetailsDecrypt;
 
 import com.eclipse.apiRequest.APIRequest;
 import com.eclipse.apiRequest.APIRequestQueue;
+import com.eclipse.gameObject.Character;
 import com.eclipse.sniffer.network.NetPacket;
+import com.eclipse.sniffer.network.PacketDecryption;
 import com.eclipse.sniffer.network.ROPacketDetail;
 import com.google.gson.JsonObject;
 
@@ -12,7 +14,7 @@ import java.util.regex.Pattern;
 
 public class GeneralInfoDecrypt {
 
-    private static final Map<Integer, String> currentMap = new HashMap<>();
+    private static final Map<Integer, Character> currentMap = new HashMap<>();
 
     public static void process(ROPacketDetail pd) {
         GeneralInfoDecrypt gd = new GeneralInfoDecrypt();
@@ -26,6 +28,16 @@ public class GeneralInfoDecrypt {
                 break;
             case CHAT_INFO:
                 gd.processChat(pd);
+                break;
+            case PARTY_JOIN:
+                gd.processPartyJoin(pd);
+                break;
+            case PLAYER_EQUIPMENT:
+                gd.processPlayerEquipment(pd);
+                break;
+            case CHARACTER_STATUS:
+                gd.processCharacterStatus(pd);
+                break;
         }
 
     }
@@ -80,7 +92,17 @@ public class GeneralInfoDecrypt {
         String mapName = new String(bMapName);
         mapName = mapName.substring(0, mapName.length()-4);
 
-        currentMap.put(pd.getPort(), mapName);
+        Character ch;
+        if (currentMap.containsKey(pd.getPort())) {
+            ch = currentMap.remove(pd.getPort());
+            ch.setMapName(mapName);
+            currentMap.put(pd.getPort(), ch);
+        } else {
+            ch = new Character();
+            ch.setMapName(mapName);
+        }
+        currentMap.put(pd.getPort(), ch);
+
     }
 
     /**
@@ -121,7 +143,55 @@ public class GeneralInfoDecrypt {
 
     }
 
-    public static String getMapName(int port) {
+    /**
+     * CHARACTER_STATUS:
+     *      [xx][xx][xx][xx] Account ID
+     *
+     *      '0229' => ['character_status', 'a4 v2 V C', [qw(ID opt1 opt2 option stance)]],
+     * @param pd
+     */
+    private void processCharacterStatus(ROPacketDetail pd) {
+        byte[] bCharacterStatus = pd.getContent();
+        byte[] bAccountId = NetPacket.reverseContent(Arrays.copyOfRange(bCharacterStatus, 0, 4));
+
+        int accountId = (ByteBuffer.wrap(bAccountId)).getInt();
+        System.out.println("["+ pd.getName() +"] Account ID -> "+ accountId);
+    }
+
+    /**
+     * PLAYER_EQUIPMENT
+     *      [xx][xx][xx][xx] Account ID
+     *
+     *      '01D7' => ['player_equipment', 'a4 C v2', [qw(sourceID type ID1 ID2)]],
+     * @param pd
+     */
+    private void processPlayerEquipment(ROPacketDetail pd) {
+        byte[] bCharacterStatus = pd.getContent();
+        byte[] bAccountId = NetPacket.reverseContent(Arrays.copyOfRange(bCharacterStatus, 0, 4));
+
+        int accountId = (ByteBuffer.wrap(bAccountId)).getInt();
+        System.out.println("["+ pd.getName() +"] Account ID -> "+ accountId);
+    }
+
+    /**
+     * PARTY_JOIN
+     *
+     *		'0AE4' => ['party_join', 'a4 a4 V v4 C Z24 Z24 Z16 C2', [qw(ID charID role jobID lv x y type name user map item_pickup item_share)]],
+     * @param pd
+     * @return
+     */
+    private void processPartyJoin(ROPacketDetail pd) {
+        byte[] bCharacterStatus = pd.getContent();
+        byte[] bAccountId = NetPacket.reverseContent(Arrays.copyOfRange(bCharacterStatus, 0, 4));
+        byte[] bCharacterId = NetPacket.reverseContent(Arrays.copyOfRange(bCharacterStatus, 4, 8));
+
+        int accountId = (ByteBuffer.wrap(bAccountId)).getInt();
+        int characterId = (ByteBuffer.wrap(bCharacterId)).getInt();
+        System.out.println("["+ pd.getName() +"] Account ID -> "+ accountId +" - Character ID -> "+ characterId);
+
+    }
+
+    public static Character getCharacterInfo(int port) {
         return currentMap.get(port);
     }
 

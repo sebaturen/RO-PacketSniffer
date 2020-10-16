@@ -2,9 +2,11 @@ package com.eclipse.gameDetailsDecrypt;
 
 import com.eclipse.apiRequest.APIRequest;
 import com.eclipse.apiRequest.APIRequestQueue;
+import com.eclipse.gameObject.Character;
 import com.eclipse.gameObject.EquipItem;
 import com.eclipse.gameObject.enums.EnchantList;
 import com.eclipse.gameObject.enums.MonsterList;
+import com.eclipse.sniffer.Sniffer;
 import com.eclipse.sniffer.enums.PacketList;
 import com.eclipse.sniffer.network.NetPacket;
 import com.eclipse.sniffer.network.PacketDecryption;
@@ -19,8 +21,12 @@ import com.eclipse.gameObject.tables.MonsterNames;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ActorDecrypt {
+
+    private static Logger logger = LoggerFactory.getLogger(ActorDecrypt.class);
 
     public static void process(ROPacketDetail pd) {
         ActorDecrypt cd = new ActorDecrypt();
@@ -267,10 +273,9 @@ public class ActorDecrypt {
             mobLocationInfo.addProperty("monster_id", monsterId);
             mobLocationInfo.addProperty("monster_name", MonsterNames.getMonsterName(monster));
             mobLocationInfo.addProperty("timestamp", new Date().getTime());
-            String mapName = GeneralInfoDecrypt.getMapName(port);
-            if (mapName != null) {
-                mobLocationInfo.addProperty("map_name", GeneralInfoDecrypt.getMapName(port));
-            }
+            Character ch = GeneralInfoDecrypt.getCharacterInfo(port);
+            mobLocationInfo.addProperty("map_name", ch.getMapName());
+            mobLocationInfo.addProperty("character", ch.toString());
             mobLocationInfo.addProperty("x", x);
             mobLocationInfo.addProperty("y", y);
 
@@ -293,7 +298,7 @@ public class ActorDecrypt {
 
         new Thread(() -> {
             if (pd.getContent().length <= START_EQUIP) {
-                System.out.println("Not equip");
+                logger.info("Not equip");
             } else {
                 byte[] inf = pd.getContent();
                 byte[] equipInf = Arrays.copyOfRange(inf,START_EQUIP,inf.length);
@@ -325,7 +330,7 @@ public class ActorDecrypt {
                 }
                 characterInfo.add("equip", equips);
 
-                System.out.println(characterInfo);
+                logger.info(characterInfo.toString());
             }
 
         }).start();
@@ -438,7 +443,7 @@ public class ActorDecrypt {
                         int id = (ByteBuffer.wrap(bId)).getInt();
                         short cant = (ByteBuffer.wrap(bCant)).getShort();
 
-                        System.out.println(cant +"\t"+ ItemNames.getItemId(id));
+                        logger.info(cant +"\t"+ ItemNames.getItemId(id));
 
                     }
                     break;
@@ -468,7 +473,7 @@ public class ActorDecrypt {
                             enchantsList.append("\t").append(prettyFormat);
                         }
 
-                        System.out.println("1\t"+ ItemNames.getItemId(equipItem.getItemId()) +"\t"+ cardsList + enchantsList);
+                        logger.info("1\t"+ ItemNames.getItemId(equipItem.getItemId()) +"\t"+ cardsList + enchantsList);
 
                     }
                     break;

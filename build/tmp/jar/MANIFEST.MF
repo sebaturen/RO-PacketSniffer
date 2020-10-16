@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Class-Path: pcap4j-packetfactory-static-1.8.2.jar pcap4j-core-1.8.2.ja
+ r slf4j-log4j12-1.7.29.jar jna-5.3.1.jar slf4j-api-1.7.29.jar log4j-1
+ .2.17.jar
+Main-Class: com.eclipse.sniffer.Sniffer
+

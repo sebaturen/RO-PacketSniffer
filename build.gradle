@@ -1,12 +1,19 @@
 plugins {
-    id 'java'
+    id "groovy"
+    id "java"
+    id "idea"
 }
 
-group 'org.example'
-version '1.0-SNAPSHOT'
+group 'com.eclipse'
+version '1.28'
 
 repositories {
     mavenCentral()
+}
+
+configurations {
+    // configuration that holds jars to include in the jar
+    extraLibs
 }
 
 dependencies {
@@ -14,11 +21,26 @@ dependencies {
 
     implementation 'com.google.code.gson:gson:2.8.6'
 
-    compile 'org.pcap4j:pcap4j-core:1.+'
-    compile 'org.pcap4j:pcap4j-packetfactory-static:1.+'
+    extraLibs 'org.pcap4j:pcap4j-core:1.+'
+    extraLibs 'org.pcap4j:pcap4j-packetfactory-static:1.+'
+
+    extraLibs group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.29'
+    configurations.compile.extendsFrom(configurations.extraLibs)
 
 }
 
 test {
     useJUnitPlatform()
+}
+
+jar {
+    from {
+        configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    manifest {
+        attributes(
+                'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+                'Main-Class': 'com.eclipse.sniffer.Sniffer'
+        )
+    }
 }

@@ -5,6 +5,8 @@ import com.eclipse.apiRequest.APIRequestQueue;
 import com.eclipse.sniffer.network.NetPacket;
 import com.eclipse.sniffer.network.ROPacketDetail;
 import com.google.gson.JsonObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -13,6 +15,8 @@ import java.util.Date;
 import java.util.regex.Pattern;
 
 public class GuildDetailDecrypt {
+
+    private static Logger logger = LoggerFactory.getLogger(GuildDetailDecrypt.class);
 
     public static void process(ROPacketDetail pd) {
         GuildDetailDecrypt gd = new GuildDetailDecrypt();
@@ -124,7 +128,7 @@ public class GuildDetailDecrypt {
         new Thread(() -> {
 
             String msg = new String(pd.getContent());
-            System.out.println("Guild Breaker: "+ msg);
+            logger.info("Woe BREAK: "+ msg);
 
             Pattern woe1Pattern = Pattern.compile(GuildDetailDecrypt.woeBreakerPattern);
             if ((woe1Pattern.matcher(msg)).matches()) {
@@ -233,7 +237,7 @@ public class GuildDetailDecrypt {
             breakInfo.addProperty("cast_id", castId);
             breakInfo.addProperty("guild_name", guild);
             breakInfo.addProperty("timestamp", time);
-            System.out.println(breakInfo);
+            logger.info("Break info: "+ breakInfo);
 
             APIRequest.shared.POST(new APIRequestQueue("/woe/break/cast/"+ castId, breakInfo, "POST"));
 

@@ -7,6 +7,8 @@ import com.eclipse.guildWoeBreaker.WoEBreaker;
 import com.eclipse.sniffer.network.PacketDecryption;
 import com.eclipse.sniffer.network.ROPacketDetail;
 import com.google.gson.JsonObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -29,6 +31,7 @@ public class APIRequest {
     public static final String URL_API = "https://panel.delmal.cl/rest";
     public static APIRequest shared = new APIRequest();
     private static List<APIRequestQueue> queue = new ArrayList<>();
+    private static Logger logger = LoggerFactory.getLogger(APIRequest.class);
 
     public APIRequest() {
 
@@ -59,7 +62,7 @@ public class APIRequest {
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         executor.scheduleAtFixedRate(() -> {
             if (queue.size() > 0) {
-                System.out.println("API Queue Size: "+ queue.size());
+                logger.info("API queue size: "+ queue.size());
                 try {
                     APIRequestQueue q = queue.remove(0);
                     request(q.getType(), q);
@@ -101,10 +104,10 @@ public class APIRequest {
                 if (responseCode == 500) {
                     queue.add(request);
                 }
-                System.out.println("Put info error! code!: "+ responseCode);
+                logger.info("Put info error code: "+ responseCode);
             } else {
                 if (queue.size() > 0) {
-                    System.out.println("API Queue Size: "+ queue.size());
+                    logger.info("API Queue Size: "+ queue.size());
                     try {
                         APIRequestQueue q = queue.remove(0);
                         request(q.getType(), q);
@@ -116,8 +119,8 @@ public class APIRequest {
 
         } catch (IOException e) {
             queue.add(request);
-            System.out.println("API Connection exception "+ e);
-            System.out.println("Request: "+ request);
+            logger.info("API Connection exception "+ e);
+            logger.info("Request "+ request);
         }
     }
 }

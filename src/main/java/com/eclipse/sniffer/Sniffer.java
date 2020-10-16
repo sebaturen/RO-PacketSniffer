@@ -7,8 +7,10 @@ import com.eclipse.guildWoeBreaker.WoEBreaker;
 import com.eclipse.sniffer.network.PacketDecryption;
 import com.eclipse.sniffer.network.ROPacketDetail;
 import com.eclipse.sniffer.network.PacketInterceptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -22,8 +24,11 @@ public class Sniffer {
     private static final PacketDecryption pDecrypt = new PacketDecryption();
     private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private static boolean verbose = false;
+    private static Logger logger = LoggerFactory.getLogger(Sniffer.class);
 
     public static void main(String... args) {
+
+
         runArgs = args;
         pInter = new PacketInterceptor(args[0]);
         apiKey = args[1];
@@ -33,6 +38,10 @@ public class Sniffer {
         if (args.length == 3) {
             verbose = Boolean.parseBoolean(args[2]);
         }
+
+        System.out.println("Lupita system is started!~");
+        logger.info("Lupita system is started!");
+
     }
 
     /**
@@ -56,6 +65,7 @@ public class Sniffer {
                 while( (pd = PacketDecryption.getPacket()) != null) {
                     if (verbose) {
                         System.out.println(pd);
+                        System.out.println(PacketDecryption.convertBytesToHex(pd.getContent()));
                     }
                     switch (pd.getName()) {
                         case LOCAL_BROADCAST:
@@ -77,18 +87,15 @@ public class Sniffer {
                             GuildDetailDecrypt.process(pd);
                             break;
                         case SYSTEM_CHAT: case MAP_CHANGE: case MAP_LOADED: case MAP_LOADED_2: case MAP_CHANGED: case CHAT_INFO:
+                        case PARTY_JOIN: case PLAYER_EQUIPMENT: case CHARACTER_STATUS:
                             GeneralInfoDecrypt.process(pd);
                             break;
                         case UNKNOWN:
-                            System.out.print("UNKNOWN! -- "+ pd);
+                            logger.info("UNKNOWN PACKET! -- "+ pd);
                             break;
                         case NPC_TALK:
-                            System.out.println(pd);
-                            System.out.println(new String(pd.getContent()));
-                            break;
-                        case MONSTER_HP_INFO_TINY:
-                            //System.out.print(pd +" == "+ Arrays.toString(pd.getContent()) +" // ");
-                            //System.out.println(PacketDecryption.convertBytesToHex(pd.getContent()));
+                            //logger.info(pd.toString());
+                            logger.info(new String(pd.getContent()));
                             break;
                     }
                 }

@@ -1,6 +1,9 @@
 package com.eclipse.sniffer.network;
 
+import com.eclipse.sniffer.Sniffer;
 import com.eclipse.sniffer.tables.RecvPackets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.util.*;
@@ -12,9 +15,9 @@ public class PacketDecryption {
     private static final List<ROPacketDetail> packList = new ArrayList<>();
     private final Map<Integer, byte[]> delayPacket = new HashMap<>();
     private final List<byte[]> lastPackets = new ArrayList<>();
+    private static Logger logger = LoggerFactory.getLogger(PacketDecryption.class);
 
     public PacketDecryption() {
-
     }
 
     /**
@@ -25,12 +28,10 @@ public class PacketDecryption {
         try {
             packList.addAll(packetSplitter(netPacket));
         } catch (Exception e) {
-            System.out.println("Failed to decrypt packet! "+ e);
-            System.out.println("PACKET: "+ netPacket);
-            System.out.println("PORT: "+ netPacket.getPort());
-            System.out.print("LAST 5 PACKETS!: ");
+            logger.info("Failed to decrypt packet "+ e +" PACKET: "+ netPacket +" PORT "+ netPacket.getPort());
+            logger.info("Last 5 Packets: ");
             for(byte[] p : lastPackets) {
-                System.out.print(Arrays.toString(p)+", ");
+                logger.info(Arrays.toString(p)+", ");
             }
         }
 
@@ -101,8 +102,7 @@ public class PacketDecryption {
                 }
             } while (sepContent != null && sepContent.length > 0);
         } catch (IllegalArgumentException e) {
-            System.out.println("Error "+ e);
-            System.out.println("Packet: "+ Arrays.toString(netPacket.getContent()));
+            logger.error("Error "+ e +" PACKET: "+ Arrays.toString(netPacket.getContent()));
             e.printStackTrace();
             //System.exit(-1);
         }
@@ -138,7 +138,7 @@ public class PacketDecryption {
             try {
                 return packList.remove(0);
             } catch (UnsupportedOperationException | IndexOutOfBoundsException e) {
-                System.out.println("Failed to remove RO Packet "+ e);
+                logger.info("Failed to remove RO Packet from list "+ e);
             }
         }
         return null;

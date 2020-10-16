@@ -1,9 +1,7 @@
 package com.eclipse.gameObject.tables;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Objects;
 import java.util.Properties;
 
 public class ItemNames {
@@ -14,8 +12,9 @@ public class ItemNames {
     static {
         try {
             ClassLoader classLoader = ItemNames.class.getClassLoader();
-            InputStream is = new FileInputStream(Objects.requireNonNull(classLoader.getResource(ITEMS_PROPERTIES)).getFile());
-            items.load(is);
+            try (InputStream stream = classLoader.getResourceAsStream(ITEMS_PROPERTIES)) {
+                items.load(stream);
+            }
         } catch(IOException e) {
             System.out.println(e.toString());
         }
