@@ -4,9 +4,10 @@ import com.eclipse.apiRequest.APIRequest;
 import com.eclipse.apiRequest.APIRequestQueue;
 import com.eclipse.gameObject.Character;
 import com.eclipse.sniffer.network.NetPacket;
-import com.eclipse.sniffer.network.PacketDecryption;
 import com.eclipse.sniffer.network.ROPacketDetail;
 import com.google.gson.JsonObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.util.*;
@@ -14,6 +15,7 @@ import java.util.regex.Pattern;
 
 public class GeneralInfoDecrypt {
 
+    private static Logger logger = LoggerFactory.getLogger(GeneralInfoDecrypt.class);
     private static final Map<Integer, Character> currentMap = new HashMap<>();
 
     public static void process(ROPacketDetail pd) {
@@ -70,6 +72,16 @@ public class GeneralInfoDecrypt {
                 GuildDetailDecrypt.process(pd);
             }
 
+            Pattern woe2PatternStartEnd = Pattern.compile(GuildDetailDecrypt.woe2StartPattern);
+            if ((woe2PatternStartEnd.matcher(msg)).matches()) {
+                GuildDetailDecrypt.process(pd);
+            }
+
+            JsonObject systemChatInf = new JsonObject();
+            systemChatInf.addProperty("chat", msg);
+            systemChatInf.addProperty("timestamp", pd.getTimestamp().getTime());
+            APIRequest.shared.POST(new APIRequestQueue("/system/chat", systemChatInf, "POST"));
+
         }).start();
     }
 
@@ -92,15 +104,8 @@ public class GeneralInfoDecrypt {
         String mapName = new String(bMapName);
         mapName = mapName.substring(0, mapName.length()-4);
 
-        Character ch;
-        if (currentMap.containsKey(pd.getPort())) {
-            ch = currentMap.remove(pd.getPort());
-            ch.setMapName(mapName);
-            currentMap.put(pd.getPort(), ch);
-        } else {
-            ch = new Character();
-            ch.setMapName(mapName);
-        }
+        Character ch = removeCharacterInfo(pd.getPort());
+        ch.setMapName(mapName);
         currentMap.put(pd.getPort(), ch);
 
     }
@@ -138,7 +143,7 @@ public class GeneralInfoDecrypt {
             chatInfo.addProperty("chat_name", chatName);
             APIRequest.shared.PUT(new APIRequestQueue("/link/"+ accountId, chatInfo, "PUT"));
 
-            System.out.println("Account ["+ accountId +"]\nid ["+ id +"]\nlimit ["+ limit +"]\nnumberUsers ["+ numberUsers +"]\nisPublic ["+ isPublic +"]\nChatName: ["+ chatName +"]");
+            logger.info("Chat: "+ "Account ["+ accountId +"] id ["+ id +"] limit ["+ limit +"] numberUsers ["+ numberUsers +"] isPublic ["+ isPublic +"] ChatName: ["+ chatName +"]");
         }
 
     }
@@ -155,7 +160,10 @@ public class GeneralInfoDecrypt {
         byte[] bAccountId = NetPacket.reverseContent(Arrays.copyOfRange(bCharacterStatus, 0, 4));
 
         int accountId = (ByteBuffer.wrap(bAccountId)).getInt();
-        System.out.println("["+ pd.getName() +"] Account ID -> "+ accountId);
+
+        Character ch = removeCharacterInfo(pd.getPort());
+        ch.setAccountId(accountId);
+        currentMap.put(pd.getPort(), ch);
     }
 
     /**
@@ -170,7 +178,10 @@ public class GeneralInfoDecrypt {
         byte[] bAccountId = NetPacket.reverseContent(Arrays.copyOfRange(bCharacterStatus, 0, 4));
 
         int accountId = (ByteBuffer.wrap(bAccountId)).getInt();
-        System.out.println("["+ pd.getName() +"] Account ID -> "+ accountId);
+
+        Character ch = removeCharacterInfo(pd.getPort());
+        ch.setAccountId(accountId);
+        currentMap.put(pd.getPort(), ch);
     }
 
     /**
@@ -187,12 +198,22 @@ public class GeneralInfoDecrypt {
 
         int accountId = (ByteBuffer.wrap(bAccountId)).getInt();
         int characterId = (ByteBuffer.wrap(bCharacterId)).getInt();
-        System.out.println("["+ pd.getName() +"] Account ID -> "+ accountId +" - Character ID -> "+ characterId);
 
+        Character ch = removeCharacterInfo(pd.getPort());
+        if (ch.getAccountId() == accountId) {
+            ch.setCharacterId(characterId);
+        }
+        currentMap.put(pd.getPort(), ch);
     }
 
     public static Character getCharacterInfo(int port) {
         return currentMap.get(port);
     }
-
+    private Character removeCharacterInfo(int port) {
+        if (currentMap.containsKey(port)) {
+            return currentMap.remove(port);
+        } else {
+            return new Character();
+        }
+    }
 }

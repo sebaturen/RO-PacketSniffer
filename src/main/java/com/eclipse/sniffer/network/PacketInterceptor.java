@@ -12,11 +12,12 @@ import java.net.InetAddress;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PacketInterceptor {
 
-    public List<NetPacket>  packetList = new ArrayList<>();
+    public List<NetPacket> packetList = new ArrayList<>();
     private String ip;
     public static final int SNAP_LEN = 65536;
     public static final int TIMEOUT = 10;
@@ -41,13 +42,13 @@ public class PacketInterceptor {
                     System.exit(0);
                     System.out.println("SERVICE IS DOWN! RESTART NOW IT TO WORK AGAIN ["+ packetList.size() +"]");
                 }
-                //System.out.print("RO Packet ["+ packetList.size() +"]");
-
                 TcpPacket.TcpHeader tcpPacket = packet.get(TcpPacket.class).getHeader();
-                byte[] evPacket = packet.get(TcpPacket.class).getPayload().getRawData();
+                if (packet.get(TcpPacket.class).getPayload() != null) {
+                    byte[] evPacket = packet.get(TcpPacket.class).getPayload().getRawData();
+                    NetPacket netPacket = new NetPacket(evPacket, tcpPacket.getDstPort().valueAsInt());
+                    packetList.add(netPacket);
+                }
 
-                NetPacket netPacket = new NetPacket(evPacket, tcpPacket.getDstPort().valueAsInt());
-                packetList.add(netPacket);
             }
         }
     };

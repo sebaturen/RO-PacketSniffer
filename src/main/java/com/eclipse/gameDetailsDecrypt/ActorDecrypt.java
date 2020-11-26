@@ -6,7 +6,6 @@ import com.eclipse.gameObject.Character;
 import com.eclipse.gameObject.EquipItem;
 import com.eclipse.gameObject.enums.EnchantList;
 import com.eclipse.gameObject.enums.MonsterList;
-import com.eclipse.sniffer.Sniffer;
 import com.eclipse.sniffer.enums.PacketList;
 import com.eclipse.sniffer.network.NetPacket;
 import com.eclipse.sniffer.network.PacketDecryption;
@@ -99,6 +98,7 @@ public class ActorDecrypt {
      * @param
      */
     private void processPlayerShowInfo(byte[] inf, PacketList packetType) {
+        //System.out.println("Actor inf ["+ packetType +"] =>  "+ PacketDecryption.convertBytesToHex(inf));
         // Struct info
         byte[] bAccId        = NetPacket.reverseContent(Arrays.copyOfRange(inf, ID_START, ID_START+4));
         byte[] bCharId       = NetPacket.reverseContent(Arrays.copyOfRange(inf, CHAR_ID_START, CHAR_ID_START+4));
@@ -188,7 +188,7 @@ public class ActorDecrypt {
             pjInfo.addProperty("clothes_color_id", clothesColorId);
 
             if (charId != 307313 && charId != 320947) {
-               // System.out.println((new Date()) +" - "+ pjInfo);
+                // System.out.println((new Date()) +" - "+ pjInfo);
             }
 
             APIRequest.shared.PUT(new APIRequestQueue("/characters/"+ accId +"/"+ charId, pjInfo, "PUT"));
@@ -264,7 +264,10 @@ public class ActorDecrypt {
                 MonsterList.GOLDEN_BUG,
                 MonsterList.FALLINGBISHOP,
                 MonsterList.THANATOS,
-                MonsterList.KTULLANUX
+                MonsterList.KTULLANUX,
+                MonsterList.DARK_SNAKE_LORD,
+                MonsterList.ENTWEIHEN,
+                MonsterList.NAGHT_SIEGER
         );
         if (searchMobs.contains(monster) && x > 0 && y > 0) {
 
@@ -274,8 +277,15 @@ public class ActorDecrypt {
             mobLocationInfo.addProperty("monster_name", MonsterNames.getMonsterName(monster));
             mobLocationInfo.addProperty("timestamp", new Date().getTime());
             Character ch = GeneralInfoDecrypt.getCharacterInfo(port);
-            mobLocationInfo.addProperty("map_name", ch.getMapName());
-            mobLocationInfo.addProperty("character", ch.toString());
+            if (ch != null) {
+                mobLocationInfo.addProperty("map_name", ch.getMapName());
+                JsonObject cInfo = new JsonObject();
+                cInfo.addProperty("account_id", ch.getAccountId());
+                cInfo.addProperty("character_id", ch.getCharacterId());
+                mobLocationInfo.add("character", cInfo);
+            } else {
+                mobLocationInfo.addProperty("map_name", "UNKNOWN!");
+            }
             mobLocationInfo.addProperty("x", x);
             mobLocationInfo.addProperty("y", y);
 

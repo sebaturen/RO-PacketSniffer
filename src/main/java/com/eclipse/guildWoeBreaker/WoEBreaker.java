@@ -4,14 +4,14 @@ import com.eclipse.sniffer.network.ROPacketDetail;
 
 import java.util.Arrays;
 
-/**
- * '01C3' => ['local_broadcast', 'v V v4 Z*', [qw(len color font_type font_size font_align font_y message)]],
- * MESSAGE [11-n]
- */
 public class WoEBreaker {
 
     public static final int MESSAGE_START = 11;
 
+    /**
+     * '01C3' => ['local_broadcast', 'v V v4 Z*', [qw(len color font_type font_size font_align font_y message)]],
+     * MESSAGE [11-n]
+     */
     public static void process (ROPacketDetail pd) {
 
         new Thread(() -> {

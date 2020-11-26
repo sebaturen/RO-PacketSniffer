@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.eclipse'
-version '1.28'
+version '1.30'
 
 repositories {
     mavenCentral()
